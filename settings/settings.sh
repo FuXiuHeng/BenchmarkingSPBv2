@@ -16,7 +16,7 @@ miner_rpc_port=8001
 user_rpc_port_start=8002
 
 # Overlay network port allocations
-miner_1_overlay_port=24000
-miner_2_overlay_port=24001
+miner_ctp_overlay_port=24000
+miner_erc_overlay_port=24001
 consumer_overlay_port=24002
 
