@@ -9,6 +9,7 @@ import struct
 import time
 import web3
 
+import overlay_nodes.helper.communications as communications
 import overlay_nodes.helper.constants as constants
 import overlay_nodes.helper.ctp_database as ctp_database
 import overlay_nodes.helper.logger as logger
@@ -57,7 +58,7 @@ def run(settings):
 
         while True:
             # Parse packet header
-            header_packet = consumer_conn.recv(constants.HEADER_BYTES)
+            header_packet = communications.receive_message_header(consumer_conn)
             if header_packet == constants.CTP:
                 print('Received CTP')
             elif header_packet == constants.END or header_packet == b'':
@@ -73,23 +74,8 @@ def run(settings):
                 print('Received this header packet {}'.format(header_packet))
                 raise Exception('Should not receive anything other than CTP')
 
-            # Parse size of data
-            size_packet = consumer_conn.recv(struct.calcsize("i"))
-            size = struct.unpack("i", size_packet)[0]
-
-            # Receive data of the specified size
-            buff = []
-            acc_size = 0
-            while acc_size < size:
-                msg = consumer_conn.recv(size - acc_size)
-                acc_size += len(msg)
-                if not msg:
-                    break
-                buff.append(msg)
-
-            # Unpickle data - convert from byte stream to python object
-            serialised_ctp = b"".join(buff)
-            ctp = pickle.loads(serialised_ctp)
+            # Receive the message body (CTP transaction) 
+            ctp = communications.receive_message_body(consumer_conn)
 
             # Store CTP into database
             raw_txn = ctp.rawTransaction
@@ -104,12 +90,7 @@ def run(settings):
             # Instead, we send an ERC straight back to the miner
 
             # Sends ERC to miner_erc, along with the relevant CTP ID
-            serialised_ctp_id = pickle.dumps(ctp_id)
-            miner_erc_conn.sendall(
-                constants.ERC
-                + struct.pack("i", len(serialised_ctp_id))
-                + serialised_ctp_id
-            )
+            communications.send_message(miner_erc_conn, constants.ERC, ctp_id)
             print('Sends ERC to miner_erc')
 
         miner_erc_conn.close()

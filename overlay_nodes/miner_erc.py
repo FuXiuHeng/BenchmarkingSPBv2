@@ -9,6 +9,7 @@ import struct
 import time
 import web3
 
+import overlay_nodes.helper.communications as communications
 import overlay_nodes.helper.constants as constants
 import overlay_nodes.helper.ctp_database as ctp_database
 import overlay_nodes.helper.logger as logger
@@ -50,7 +51,8 @@ def run(settings):
 
         while True:
             # Parse packet header
-            header_packet = miner_ctp_conn.recv(constants.HEADER_BYTES)
+            header_packet = communications.receive_message_header(miner_ctp_conn)
+
             if header_packet == constants.ERC:
                 print('Received ERC')
             elif header_packet == constants.END or header_packet == b'':
@@ -63,23 +65,8 @@ def run(settings):
                 print('Received this header packet {}'.format(header_packet))
                 raise Exception('Should not receive anything other than ERC')
 
-            # Parse size of data
-            size_packet = miner_ctp_conn.recv(struct.calcsize("i"))
-            size = struct.unpack("i", size_packet)[0]
-
-            # Receive data of the specified size
-            buff = []
-            acc_size = 0
-            while acc_size < size:
-                msg = miner_ctp_conn.recv(size - acc_size)
-                acc_size += len(msg)
-                if not msg:
-                    break
-                buff.append(msg)
-            
-            # Unpickle data - convert from byte stream to python object
-            serialised_ctp_id = b"".join(buff)
-            ctp_id = pickle.loads(serialised_ctp_id)
+            # Receive the message body (CTP ID)
+            ctp_id = communications.receive_message_body(miner_ctp_conn)
 
             # Mine CTP for the given CTP ID
             db = ctp_database.connect_database(db_host, db_user, db_password)
@@ -94,6 +81,8 @@ def run(settings):
             from_addr = db_entry[ctp_database.FROM_ADDR_INDEX]
             txn_hash_hex_str = db_entry[ctp_database.TXN_HASH_INDEX]
             txn_hash = bytes.fromhex(txn_hash_hex_str[2:])
+
             logger.log_time_sent(simulation_id, time_sent, from_addr, txn_hash)
+            print('Logged time transaction is sent')
 
     s.close()
