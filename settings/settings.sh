@@ -1,5 +1,4 @@
 # Simulation settings
-simulation_id=1
 num_users=3
 
 # Path settings

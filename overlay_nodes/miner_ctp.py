@@ -15,9 +15,6 @@ import overlay_nodes.helper.ctp_database as ctp_database
 import overlay_nodes.helper.logger as logger
 
 def run(settings):
-    # Simulation settings
-    simulation_id = settings['simulation_id']
-
     # Ethereum settings
     miner_rpc_port = settings["miner_rpc_port"]
     password = settings["password"]

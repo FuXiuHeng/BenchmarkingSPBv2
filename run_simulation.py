@@ -15,7 +15,6 @@ import overlay_nodes.helper.constants
 from settings.settings import settings
 
 # Simulation settings
-simulation_id = settings["simulation_id"]
 energy_file = './data/energy_usage_data/separated_users/user1/user1.mat'
 energy_price = 0.01
 
@@ -32,7 +31,7 @@ print('Running SPB simulation')
 
 # Fake data for testing
 num_users = settings["num_users"] - 1 # -1 because 1 user is reserved as producer
-num_fake_data = 5
+num_fake_data = 2
 fake_data = data.fake.generate_energy_usage_data(num_users, num_fake_data)
 
 customer_to_user_dict = {} # customer_index_dict[customer_id] = user_id

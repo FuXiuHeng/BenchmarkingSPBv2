@@ -4,9 +4,6 @@ import web3
 import overlay_nodes.helper.logger as logger
 
 def run(settings):
-    # Simulation settings
-    simulation_id = settings['simulation_id']
-
     # Ethereum settings
     user01_rpc_port = settings['user_rpc_port_start']
     password = settings['password']
@@ -28,19 +25,20 @@ def run(settings):
             if latest_blocks:
                 block = w3.eth.getBlock(latest_blocks[0])
 
-                for txn in block.transactions:
-                    print('Found new mined transaction: {}'.format(txn))
-                    txn_receipt = w3.eth.getTransactionReceipt(txn)
-                    from_addr = txn_receipt['from']
-                    gas_used = txn_receipt['gasUsed']
+                if block.transactions:
+                    for txn in block.transactions:
+                        print('Found new mined transaction: {}'.format(txn))
+                        txn_receipt = w3.eth.getTransactionReceipt(txn)
+                        from_addr = txn_receipt['from']
+                        gas_used = txn_receipt['gasUsed']
 
-                    # Log the time the block is mined
-                    logger.log_time_mined(simulation_id, time_mined, from_addr, txn)
-                    print('Logged CTP mined for transaction')
+                        # Log the time the block is mined
+                        logger.log_time_mined( time_mined, from_addr, txn)
+                        print('Logged CTP mined for transaction')
 
-                    # Get the gas used by the transaction 
-                    gas_used = w3.eth.getTransactionReceipt(txn)['gasUsed']
-                    logger.log_gas_used(simulation_id, gas_used, from_addr, txn)
-                    print('Logged gas used for transaction')
-                    
-                break
+                        # Get the gas used by the transaction 
+                        gas_used = w3.eth.getTransactionReceipt(txn)['gasUsed']
+                        logger.log_gas_used(gas_used, from_addr, txn)
+                        print('Logged gas used for transaction')
+                        
+                    break

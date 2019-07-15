@@ -15,9 +15,6 @@ import overlay_nodes.helper.ctp_database as ctp_database
 import overlay_nodes.helper.logger as logger
 
 def run(settings):
-    # Simulation settings
-    simulation_id = settings['simulation_id']
-
     # Etherem settings
     miner_rpc_port = settings['miner_rpc_port']
     password = settings['password']
@@ -82,7 +79,7 @@ def run(settings):
             txn_hash_hex_str = db_entry[ctp_database.TXN_HASH_INDEX]
             txn_hash = bytes.fromhex(txn_hash_hex_str[2:])
 
-            logger.log_time_sent(simulation_id, time_sent, from_addr, txn_hash)
+            logger.log_time_sent(time_sent, from_addr, txn_hash)
             print('Logged time transaction is sent')
 
     s.close()
