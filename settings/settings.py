@@ -2,7 +2,7 @@ from datetime import datetime
 
 settings = {
     # Simulation settings
-    "num_users": 3, # Existing 
+    "num_users": 3, # Existing data has up to 85 unique users (use 86 to allow for 1 producer)
     "simulation_date_time": datetime.now(),
     "energy_price": 0.01,
 
