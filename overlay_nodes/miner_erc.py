@@ -15,6 +15,9 @@ import overlay_nodes.helper.ctp_database as ctp_database
 import overlay_nodes.helper.logger as logger
 
 def run(settings):
+    # Simulation settings
+    simulation_date_time = settings["simulation_date_time"]
+
     # Etherem settings
     miner_rpc_port = settings['miner_rpc_port']
     password = settings['password']
@@ -22,6 +25,7 @@ def run(settings):
     # Overlay network settings
     miner_erc_overlay_port = settings['miner_erc_overlay_port']
     local_host = socket.gethostname()
+    node_name = 'miner_erc'
 
     # Database settings
     db_host = settings["db_host"]
@@ -29,6 +33,7 @@ def run(settings):
     db_password = settings["db_password"]
 
     # Welcome message
+    logger.log(simulation_date_time, node_name, 'Running {} overlay node'.format(node_name))
     print('Running miner_erc overlay node')
 
     # Starting server to listen to ERC
@@ -37,13 +42,16 @@ def run(settings):
 
     # Connecting to miner ethereum node
     w3 = web3.Web3(web3.Web3.HTTPProvider('http://127.0.0.1:{}'.format(miner_rpc_port)))
+    logger.log(simulation_date_time, node_name, 'Connected to miner ethereum node via RPC')
     print('Connected to miner ethereum node via RPC')
 
     while True:
         # Listening for ERC
+        logger.log(simulation_date_time, node_name, 'Listening for ERC on port {}'.format(miner_erc_overlay_port))
         print('Listening for ERC on port {}'.format(miner_erc_overlay_port))
         s.listen(5)
         miner_ctp_conn, addr = s.accept()
+        logger.log(simulation_date_time, node_name, 'Connected by {}'.format(addr))
         print('Connected by {}'.format(addr))
 
         while True:
@@ -51,14 +59,18 @@ def run(settings):
             header_packet = communications.receive_message_header(miner_ctp_conn)
 
             if header_packet == constants.ERC:
+                logger.log(simulation_date_time, node_name, 'Received ERC')
                 print('Received ERC')
             elif header_packet == constants.END or header_packet == b'':
                 miner_ctp_conn.close()
+                logger.log(simulation_date_time, node_name, 'Closed current connection')
                 print('Closed current connection')
                 break
             else:
                 miner_ctp_conn.close()
                 s.close()
+                logger.log(simulation_date_time, node_name, 'Received this header packet {}'.format(header_packet)) 
+                logger.log(simulation_date_time, node_name, 'Exception: Should not receive anything other than ERC')
                 print('Received this header packet {}'.format(header_packet))
                 raise Exception('Should not receive anything other than ERC')
 
@@ -71,6 +83,7 @@ def run(settings):
             raw_txn_hex_str = db_entry[ctp_database.RAW_TXN_INDEX]
             raw_txn = bytes.fromhex(raw_txn_hex_str[2:])
             w3.eth.sendRawTransaction(raw_txn)
+            logger.log(simulation_date_time, node_name, 'Sent ethereum transactions for the CTP_ID {}'.format(ctp_id))
             print('Sent ethereum transactions for the CTP_ID {}'.format(ctp_id))
 
             # Log CTP sent time
@@ -79,7 +92,8 @@ def run(settings):
             txn_hash_hex_str = db_entry[ctp_database.TXN_HASH_INDEX]
             txn_hash = bytes.fromhex(txn_hash_hex_str[2:])
 
-            logger.log_time_sent(time_sent, from_addr, txn_hash)
+            logger.log_time_sent(simulation_date_time, time_sent, from_addr, txn_hash)
+            logger.log(simulation_date_time, node_name, 'Logged time transaction is sent')
             print('Logged time transaction is sent')
 
     s.close()

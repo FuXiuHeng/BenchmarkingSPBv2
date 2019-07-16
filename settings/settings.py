@@ -1,6 +1,9 @@
+from datetime import datetime 
+
 settings = {
     # Simulation settings
     "num_users": 3,
+    "simulation_date_time": datetime.now(),
 
     # Path settings
     "pk_dir_path": "private_keys",

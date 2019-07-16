@@ -12,9 +12,11 @@ import web3
 import data.fake
 import private_keys.getter
 import overlay_nodes.helper.constants
+import overlay_nodes.helper.logger as logger
 from settings.settings import settings
 
 # Simulation settings
+simulation_date_time = settings["simulation_date_time"]
 energy_file = './data/energy_usage_data/separated_users/user1/user1.mat'
 energy_price = 0.01
 
@@ -25,8 +27,10 @@ password = settings["password"]
 # Overlay network settings
 miner_ctp_overlay_port = settings["miner_ctp_overlay_port"]
 local_host = socket.gethostname()
+node_name = 'simulator'
 
 # Welcome message
+logger.log(simulation_date_time, node_name, 'Running SPB Simulation')
 print('Running SPB simulation')
 
 # Fake data for testing
@@ -46,6 +50,7 @@ next_user_id = 2 # user_id 1 reserved as producer
 # Connect to the CTP miner socket
 miner_conn = socket.socket()
 miner_conn.connect((local_host, miner_ctp_overlay_port))
+logger.log(simulation_date_time, node_name, 'Connected to miner: {}'.format((local_host, miner_ctp_overlay_port)))
 print('Connected to miner: {}'.format((local_host, miner_ctp_overlay_port)))
 
 # For each energy transaction
@@ -75,6 +80,7 @@ for data_txn in fake_data:
 
         next_user_id += 1
 
+    logger.log(simulation_date_time, node_name, 'Customer {} used energy {}'.format(customer_id, energy_usage))
     print('Customer {} used energy {}'.format(customer_id, energy_usage))
 
     w3 = w3_dict[customer_id]
@@ -106,6 +112,7 @@ for data_txn in fake_data:
         + struct.pack("i", len(pickled_txn))
         + pickled_txn
     )
+    logger.log(simulation_date_time, node_name, 'Sent CTP to miner')
     print('Sent CTP to miner')
 
 # Send END to miner to signal that there are no more CTPs
