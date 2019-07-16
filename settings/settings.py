@@ -4,6 +4,12 @@ settings = {
     # Simulation settings
     "num_users": 3,
     "simulation_date_time": datetime.now(),
+    "energy_price": 0.01,
+
+    # Data settings
+    "data_path": './data/energy_usage_data/separated_users/user1/user1.mat',
+    "fake_data": True, # If true, the above data_path won't be used
+    "num_fake_data": 5,
 
     # Path settings
     "pk_dir_path": "private_keys",

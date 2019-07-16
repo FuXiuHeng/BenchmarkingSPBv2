@@ -9,7 +9,9 @@ import struct
 import time
 import web3
 
+import data.constants
 import data.fake
+import data.parser
 import private_keys.getter
 import overlay_nodes.helper.communications as communications
 import overlay_nodes.helper.constants
@@ -18,8 +20,7 @@ from settings.settings import settings
 
 # Simulation settings
 simulation_date_time = settings["simulation_date_time"]
-energy_file = './data/energy_usage_data/separated_users/user1/user1.mat'
-energy_price = 0.01
+energy_price = settings["energy_price"]
 
 # Ethereum settings
 user_rpc_port_start = settings["user_rpc_port_start"]
@@ -35,13 +36,19 @@ node_name = 'simulator'
 logger.log(simulation_date_time, node_name, 'Running SPB Simulation')
 print('Running SPB simulation')
 
-# Fake data for testing
-num_users = settings["num_users"] - 1 # -1 because 1 user is reserved as producer
-num_fake_data = 5
-fake_data = data.fake.generate_energy_usage_data(num_users, num_fake_data)
+# Data parsing
+if settings["fake_data"]: # Using fake data
+    num_users = settings["num_users"] - 1 # -1 because 1 user is reserved as producer
+    num_fake_data = settings["num_fake_data"]
+    energy_data = data.fake.generate_energy_usage_data(num_users, num_fake_data)
+
+else: # Using real data
+    data_path = settings["data_path"]
+    energy_data = data.parser.parse_energy_usage_file(data_path)
+
 
 # Inform poller about how many transaction to poll in the simulation
-num_data = len(fake_data)
+num_data = len(energy_data)
 packet_header = overlay_nodes.helper.constants.NUM_TXN
 poller_conn = socket.socket()
 poller_conn.connect((local_host, poller_port))
@@ -70,7 +77,7 @@ print('Connected to miner: {}'.format((local_host, miner_ctp_overlay_port)))
 
 # For each energy transaction
 # Generate CTP transaction as a raw, signed ethereum transaction object
-for data_txn in fake_data:
+for data_txn in energy_data:
     customer_id = data_txn[data.constants.CUSTOMER_ID_KEY]
     energy_usage = data_txn[data.constants.ENERGY_KEY]
 
