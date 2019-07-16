@@ -11,6 +11,7 @@ import web3
 
 import data.fake
 import private_keys.getter
+import overlay_nodes.helper.communications as communications
 import overlay_nodes.helper.constants
 import overlay_nodes.helper.logger as logger
 from settings.settings import settings
@@ -25,6 +26,7 @@ user_rpc_port_start = settings["user_rpc_port_start"]
 password = settings["password"]
 
 # Overlay network settings
+poller_port = settings["poller_port"]
 miner_ctp_overlay_port = settings["miner_ctp_overlay_port"]
 local_host = socket.gethostname()
 node_name = 'simulator'
@@ -37,6 +39,19 @@ print('Running SPB simulation')
 num_users = settings["num_users"] - 1 # -1 because 1 user is reserved as producer
 num_fake_data = 5
 fake_data = data.fake.generate_energy_usage_data(num_users, num_fake_data)
+
+# Inform poller about how many transaction to poll in the simulation
+num_data = len(fake_data)
+packet_header = overlay_nodes.helper.constants.NUM_TXN
+poller_conn = socket.socket()
+poller_conn.connect((local_host, poller_port))
+logger.log(simulation_date_time, node_name, 'Connected to poller: {}'.format((local_host, poller_port)))
+print('Connected to poller: {}'.format((local_host, poller_port)))
+
+communications.send_message(poller_conn ,packet_header, num_data)
+logger.log(simulation_date_time, node_name, 'Sent NUM_TXN to poller')
+print('Sent NUM_TXN to poller')
+poller_conn.close()
 
 customer_to_user_dict = {} # customer_index_dict[customer_id] = user_id
 w3_dict = {}               # w3_dict[customer_id] = w3

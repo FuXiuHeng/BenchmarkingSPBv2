@@ -1,6 +1,9 @@
+import socket
 import time
 import web3
 
+import overlay_nodes.helper.communications as communications
+import overlay_nodes.helper.constants as constants
 import overlay_nodes.helper.logger as logger
 
 def run(settings):
@@ -11,8 +14,43 @@ def run(settings):
     user01_rpc_port = settings['user_rpc_port_start']
     password = settings['password']
 
-    # Node settings
+    # Poller settings
+    poller_port = settings["poller_port"]
+    local_host = socket.gethostname()
     node_name = 'poller'
+
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.bind((local_host, poller_port))
+
+    # Listening for information about how many transactions to look out for
+    logger.log(simulation_date_time, node_name, 'Listening for number of transactions on port {}'.format(poller_port))
+    print('Listening for number of transactions on port {}'.format(poller_port))
+    s.listen(5)
+    simulator_conn, addr = s.accept()
+    logger.log(simulation_date_time, node_name, 'Connected by {}'.format(addr))
+    print('Connected by {}'.format(addr))
+
+    # Parsing packet header
+    header_packet = communications.receive_message_header(simulator_conn)
+    if header_packet == constants.NUM_TXN:
+        logger.log(simulation_date_time, node_name, 'Received number of transactions')
+        print('Received NUM_TXN')
+    else:
+        simulator_conn.close()
+        s.close()
+        logger.log(simulation_date_time, node_name, 'Received this header packet {}'.format(header_packet))
+        logger.log(simulation_date_time, node_name, 'Exception: Should not receive anything other than NUM_TXN')
+        print('Received this header packet {}'.format(header_packet))
+        raise Exception('Should not receive anything other than NUM_TXN')
+
+    # Parsing the number of transactions to look out for    
+    total_txn = communications.receive_message_body(simulator_conn)
+    logger.log(simulation_date_time, node_name, 'Received NUM_TXN: {}'.format(total_txn))
+    print('Total number of transactions to poll for: {}'.format(total_txn))
+
+    s.close()
+    logger.log(simulation_date_time, node_name, 'Closed current connection')
+    print('Closed current connection')
 
     # Connecting to user01 ethereum node
     w3 = web3.Web3(web3.Web3.HTTPProvider('http://127.0.0.1:{}'.format(user01_rpc_port)))
@@ -23,6 +61,7 @@ def run(settings):
     latest_block_filter = w3.eth.filter('latest')
 
     # Polling for mined blocks to detect if any transactions has been mined
+    txn_count = 0
     while True:
         logger.log(simulation_date_time, node_name, 'Polling for new mined transactions')
         print('Polling for new mined transactions')    
@@ -51,5 +90,13 @@ def run(settings):
                         logger.log_gas_used(simulation_date_time, gas_used, from_addr, txn)
                         logger.log(simulation_date_time, node_name, 'Logged gas used for transaction')
                         print('Logged gas used for transaction')
+
+                        txn_count += 1
+                        if txn_count == total_txn:
+                            logger.log(simulation_date_time, node_name, 'Finished polling all {} transactions'.format(total_txn))
+                            logger.log(simulation_date_time, node_name, 'End of simulation')
+                            print('Finished polling all {} transactions'.format(total_txn))
+                            print('End of simulation')
+                            exit()
                         
                     break

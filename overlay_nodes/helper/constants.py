@@ -1,5 +1,6 @@
 # Byte headers
 HEADER_BYTES = 6
+NUM_TXN         = b'NUM_TX'
 CTP             = b'CTP_TX'
 ERC             = b'ERC_TX'
 CTP_SIGNAL      = b'CTP_SN'

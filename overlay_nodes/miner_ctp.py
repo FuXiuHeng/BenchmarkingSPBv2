@@ -73,8 +73,10 @@ def run(settings):
                 miner_erc_conn.close()
                 consumer_conn.close()
                 s.close()
-                logger.log(simulation_date_time, node_name, 'Closed current connection. End of Simulation')
-                print('Closed current connection. End of Simulation')
+                logger.log(simulation_date_time, node_name, 'Closed current connection')
+                logger.log(simulation_date_time, node_name, 'End of simulation')
+                print('Closed current connection')
+                print('End of simulation')
                 exit()
             elif header_packet == b'':
                 miner_erc_conn.close()
