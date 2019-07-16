@@ -15,5 +15,3 @@ poller_thread.start()
 miner_ctp_thread.join()
 miner_erc_thread.join()
 poller_thread.join()
-
-print('End')
