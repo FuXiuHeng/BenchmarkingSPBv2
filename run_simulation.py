@@ -37,15 +37,34 @@ logger.log(simulation_date_time, node_name, 'Running SPB Simulation')
 print('Running SPB simulation')
 
 # Data parsing
-if settings["fake_data"]: # Using fake data
+if settings["use_fake_data"]: # Using fake data
+    logger.log(simulation_date_time, node_name, 'Using fake data, with {} total data and {} users'.format(num_fake_data, num_users))
+    print('Using fake data, with {} total data and {} users'.format(num_fake_data, num_users))
+
     num_users = settings["num_users"] - 1 # -1 because 1 user is reserved as producer
     num_fake_data = settings["num_fake_data"]
     energy_data = data.fake.generate_energy_usage_data(num_users, num_fake_data)
 
-else: # Using real data
-    data_path = settings["data_path"]
-    energy_data = data.parser.parse_energy_usage_file(data_path)
+    logger.log(simulation_date_time, node_name, 'Completed generation of fake data')
+    print('Completed generation of fake data')
 
+else: # Using real data
+    logger.log(simulation_date_time, node_name, 'Using real data: {}'.format(data_path))
+    print('Using real data: {}'.format(data_path))
+
+    data_path = settings["data_path"]
+    all_energy_data = data.parser.parse_energy_usage_file(data_path)
+
+    logger.log(simulation_date_time, node_name, 'Completed parsing of real data')
+    print('Completed parsing of real data')
+
+# Partial data
+if settings["use_partial_data"]:
+    start = settings["partial_data_start"]
+    end = settings["partial_data_end"]
+    energy_data = all_energy_data[start:end]
+else:
+    energy_data = all_energy_data
 
 # Inform poller about how many transaction to poll in the simulation
 num_data = len(energy_data)
