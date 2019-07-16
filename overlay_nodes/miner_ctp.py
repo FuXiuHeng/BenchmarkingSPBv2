@@ -68,8 +68,15 @@ def run(settings):
             if header_packet == constants.CTP:
                 logger.log(simulation_date_time, node_name, 'Received CTP')
                 print('Received CTP')
-            elif header_packet == constants.END or header_packet == b'':
+            elif header_packet == constants.END:
                 miner_erc_conn.sendall(constants.END)
+                miner_erc_conn.close()
+                consumer_conn.close()
+                s.close()
+                logger.log(simulation_date_time, node_name, 'Closed current connection. End of Simulation')
+                print('Closed current connection. End of Simulation')
+                exit()
+            elif header_packet == b'':
                 miner_erc_conn.close()
                 consumer_conn.close()
                 logger.log(simulation_date_time, node_name, 'Closed current connection')

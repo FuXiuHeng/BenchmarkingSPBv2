@@ -35,7 +35,7 @@ print('Running SPB simulation')
 
 # Fake data for testing
 num_users = settings["num_users"] - 1 # -1 because 1 user is reserved as producer
-num_fake_data = 2
+num_fake_data = 5
 fake_data = data.fake.generate_energy_usage_data(num_users, num_fake_data)
 
 customer_to_user_dict = {} # customer_index_dict[customer_id] = user_id
