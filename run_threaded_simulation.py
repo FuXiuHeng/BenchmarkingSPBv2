@@ -3,9 +3,11 @@
 from attrdict import (
     AttrDict,
 )
+import multiprocessing
 import pickle
 import socket
 import struct
+import threading
 import time
 import web3
 
@@ -18,7 +20,6 @@ import overlay_nodes.helper.constants
 import overlay_nodes.helper.logger as logger
 from overlay_nodes import miner_ctp, miner_erc, poller
 from settings.settings import settings
-import threading
 
 # Simulation settings
 simulation_date_time = settings["simulation_date_time"]
@@ -43,11 +44,13 @@ logger.log(simulation_date_time, node_name, 'Starting threads for miner_ctp, min
 print('Starting threads for miner_ctp, miner_erc and poller')
 miner_ctp_thread = threading.Thread(target=miner_ctp.run, args=(settings,))
 miner_erc_thread = threading.Thread(target=miner_erc.run, args=(settings,))
-poller_thread = threading.Thread(target=poller.run, args=(settings,))
+poller_process = multiprocessing.Process(target=poller.run, args=(settings,))
+# poller_thread = threading.Thread(target=poller.run, args=(settings,))
 
 miner_ctp_thread.start()
 miner_erc_thread.start()
-poller_thread.start()
+poller_process.start()
+# poller_thread.start()
 
 logger.log(simulation_date_time, node_name, 'Allowing time for threads to complete initialisation')
 print('Allowing time for threads to complete initialisation')
@@ -66,12 +69,11 @@ if settings["use_fake_data"]: # Using fake data
     print('Completed generation of fake data')
 
 else: # Using real data
+    data_path = settings["data_path"]
     logger.log(simulation_date_time, node_name, 'Using real data: {}'.format(data_path))
     print('Using real data: {}'.format(data_path))
 
-    data_path = settings["data_path"]
     all_energy_data = data.parser.parse_energy_usage_file(data_path)
-
     logger.log(simulation_date_time, node_name, 'Completed parsing of real data')
     print('Completed parsing of real data')
 
@@ -182,4 +184,5 @@ miner_conn.close()
 # Wait for all other threads to complete running before closing main process
 miner_ctp_thread.join()
 miner_erc_thread.join()
-poller_thread.join()
+poller_process.join()
+# poller_thread.join()
