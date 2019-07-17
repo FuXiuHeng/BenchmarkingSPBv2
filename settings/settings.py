@@ -8,9 +8,9 @@ settings = {
 
     # Data settings
     "use_fake_data": False,
-    "num_fake_data": 5, # Fake data only
     "data_path": './data/energy_usage_data/separated_users/user1/user1.mat', # Real data only
     # "data_path": './data/energy_usage_data/file1.mat', # Real data only
+    "num_fake_data": 5, # Fake data only
 
     # Partial data settings
     "use_partial_data": True, # If true, only run simulation with a subset of the data

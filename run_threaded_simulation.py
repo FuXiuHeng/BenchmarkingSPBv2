@@ -82,6 +82,8 @@ else: # Using real data
 if settings["use_partial_data"]:
     start = settings["partial_data_start"]
     end = settings["partial_data_end"]
+    if end > len(all_energy_data):
+        end = len(all_energy_data)
     energy_data = all_energy_data[start:end]
 else:
     energy_data = all_energy_data
