@@ -1,1 +1,1 @@
-pkill --signal SIGINT geth
+pkill -u fuxiu --signal SIGKILL geth

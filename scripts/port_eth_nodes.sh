@@ -1,1 +1,1 @@
-ps aux | grep geth
+ps aux | grep fuxiu | grep geth
