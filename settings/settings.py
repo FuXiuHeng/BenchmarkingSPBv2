@@ -24,7 +24,7 @@ settings = {
 
     # Database settings
     "db_host": "localhost",
-    "db_user": "root",
+    "db_user": "fuxiu",
     "db_password": "",
 
     # Ethereum nodes settings
