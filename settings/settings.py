@@ -3,13 +3,13 @@ from datetime import datetime
 settings = {
     # Simulation settings
     "num_users": 86, # Existing data has up to 85 unique users (use 86 to allow for 1 producer)
-    "simulation_name": datetime.now().strftime('%Y%m%d_%H%M_file1_real_0_1000'),
+    "simulation_name": datetime.now().strftime('%Y%m%d_%H%M_user1_0_1000'),
     "energy_price": 0.00001,
 
     # Data settings
     "use_fake_data": False,
-    # "data_path": './data/energy_usage_data/separated_users/user1/user1.mat', # Real data only
-    "data_path": './data/energy_usage_data/file1.mat', # Real data only
+    "data_path": './data/energy_usage_data/separated_users/user1/user1.mat', # Real data only
+    #"data_path": './data/energy_usage_data/file1.mat', # Real data only
     "num_fake_data": 5, # Fake data only
 
     # Partial data settings
