@@ -49,12 +49,11 @@ if settings["use_fake_data"]: # Using fake data
     print('Completed generation of fake data')
 
 else: # Using real data
+    data_path = settings["data_path"]
     logger.log(simulation_name, node_name, 'Using real data: {}'.format(data_path))
     print('Using real data: {}'.format(data_path))
 
-    data_path = settings["data_path"]
     all_energy_data = data.parser.parse_energy_usage_file(data_path)
-
     logger.log(simulation_name, node_name, 'Completed parsing of real data')
     print('Completed parsing of real data')
 
