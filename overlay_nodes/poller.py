@@ -19,6 +19,11 @@ def run(settings):
     local_host = socket.gethostname()
     node_name = 'poller'
 
+    # Welcome message
+    logger.log(simulation_name, node_name, 'Running {} overlay node'.format(node_name))
+    print('Running {} overlay node'.format(node_name))
+
+    # Start socket to ilsten to number of transactions
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.bind((local_host, poller_port))
 

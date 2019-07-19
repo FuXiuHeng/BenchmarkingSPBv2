@@ -34,7 +34,7 @@ def run(settings):
 
     # Welcome message
     logger.log(simulation_name, node_name, 'Running {} overlay node'.format(node_name))
-    print('Running miner_erc overlay node')
+    print('Running {} overlay node'.format(node_name))
 
     # Starting server to listen to ERC
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

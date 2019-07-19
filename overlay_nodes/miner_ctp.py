@@ -30,7 +30,7 @@ def run(settings):
 
     # Welcome message
     logger.log(simulation_name, node_name, 'Running {} overlay node'.format(node_name))
-    print("Running miner_ctp overlay node")
+    print("Running {} overlay node".format(node_name))
 
     # Initialising CTP database
     db_host = settings["db_host"]
