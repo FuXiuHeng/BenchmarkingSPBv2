@@ -67,42 +67,33 @@ def run(settings):
 
     # Polling for mined blocks to detect if any transactions has been mined
     txn_count = 0
+    logger.log(simulation_name, node_name, 'Polling for new mined transactions')
+    print('Polling for new mined transactions')    
     while True:
-        logger.log(simulation_name, node_name, 'Polling for new mined transactions')
-        print('Polling for new mined transactions')    
-        while True:
-            latest_blocks = latest_block_filter.get_new_entries()
-            time_mined = time.time()
+        latest_blocks = latest_block_filter.get_new_entries()
+        time_mined = time.time()
 
-            if latest_blocks:
-                block = w3.eth.getBlock(latest_blocks[0])
-                for block_entry in latest_blocks:
-                    block = w3.eth.getBlock(block_entry)
-                    if block.transactions:
-                        for txn in block.transactions:
-                            logger.log(simulation_name, node_name, 'Found new mined transaction: {}'.format(txn))
-                            print('Found new mined transaction: {}'.format(txn))
-                            txn_receipt = w3.eth.getTransactionReceipt(txn)
-                            from_addr = txn_receipt['from']
-                            gas_used = txn_receipt['gasUsed']
+        if latest_blocks:
+            block = w3.eth.getBlock(latest_blocks[0])
+            for block_entry in latest_blocks:
+                block = w3.eth.getBlock(block_entry)
+                if block.transactions:
+                    for txn in block.transactions:
+                        txn_receipt = w3.eth.getTransactionReceipt(txn)
+                        from_addr = txn_receipt['from']
+                        gas_used = txn_receipt['gasUsed']
 
-                            # Log the time the block is mined
-                            logger.log_time_mined(simulation_name, time_mined, from_addr, txn)
-                            logger.log(simulation_name, node_name, 'Logged CTP mined for transaction')
-                            print('Logged CTP mined for transaction')
+                        # Log the time the block is mined
+                        logger.log_time_mined(simulation_name, time_mined, from_addr, txn)
 
-                            # Get the gas used by the transaction 
-                            gas_used = w3.eth.getTransactionReceipt(txn)['gasUsed']
-                            logger.log_gas_used(simulation_name, gas_used, from_addr, txn)
-                            logger.log(simulation_name, node_name, 'Logged gas used for transaction')
-                            print('Logged gas used for transaction')
+                        # Get the gas used by the transaction 
+                        gas_used = w3.eth.getTransactionReceipt(txn)['gasUsed']
+                        logger.log_gas_used(simulation_name, gas_used, from_addr, txn)
 
-                            txn_count += 1
-                            if txn_count == total_txn:
-                                logger.log(simulation_name, node_name, 'Finished polling all {} transactions'.format(total_txn))
-                                logger.log(simulation_name, node_name, 'End of simulation')
-                                print('Finished polling all {} transactions'.format(total_txn))
-                                print('End of simulation')
-                                exit()
-                            
-                        break
+                        txn_count += 1
+                        if txn_count == total_txn:
+                            logger.log(simulation_name, node_name, 'Finished polling all {} transactions'.format(total_txn))
+                            logger.log(simulation_name, node_name, 'End of simulation')
+                            print('Finished polling all {} transactions'.format(total_txn))
+                            print('End of simulation')
+                            exit()
