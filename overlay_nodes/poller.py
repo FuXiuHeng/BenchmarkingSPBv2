@@ -20,55 +20,56 @@ def run(settings):
     node_name = 'poller'
 
     # Welcome message
-    logger.log(simulation_name, node_name, 'Running {} overlay node'.format(node_name))
-    print('Running {} overlay node'.format(node_name))
+    # logger.log(simulation_name, node_name, 'Running {} overlay node'.format(node_name))
+    # print('Running {} overlay node'.format(node_name))
 
     # Start socket to ilsten to number of transactions
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.bind((local_host, poller_port))
 
     # Listening for information about how many transactions to look out for
-    logger.log(simulation_name, node_name, 'Listening for number of transactions on port {}'.format(poller_port))
-    print('Listening for number of transactions on port {}'.format(poller_port))
+    # logger.log(simulation_name, node_name, 'Listening for number of transactions on port {}'.format(poller_port))
+    # print('Listening for number of transactions on port {}'.format(poller_port))
     s.listen(5)
     simulator_conn, addr = s.accept()
-    logger.log(simulation_name, node_name, 'Connected by {}'.format(addr))
-    print('Connected by {}'.format(addr))
+    # logger.log(simulation_name, node_name, 'Connected by {}'.format(addr))
+    # print('Connected by {}'.format(addr))
 
     # Parsing packet header
     header_packet = communications.receive_message_header(simulator_conn)
     if header_packet == constants.NUM_TXN:
-        logger.log(simulation_name, node_name, 'Received number of transactions')
-        print('Received NUM_TXN')
+        pass
+        # logger.log(simulation_name, node_name, 'Received number of transactions')
+        # print('Received NUM_TXN')
     else:
         simulator_conn.close()
         s.close()
-        logger.log(simulation_name, node_name, 'Received this header packet {}'.format(header_packet))
-        logger.log(simulation_name, node_name, 'Exception: Should not receive anything other than NUM_TXN')
-        print('Received this header packet {}'.format(header_packet))
+        # logger.log(simulation_name, node_name, 'Received this header packet {}'.format(header_packet))
+        # logger.log(simulation_name, node_name, 'Exception: Should not receive anything other than NUM_TXN')
+        # print('Received this header packet {}'.format(header_packet))
         raise Exception('Should not receive anything other than NUM_TXN')
 
     # Parsing the number of transactions to look out for    
     total_txn = communications.receive_message_body(simulator_conn)
-    logger.log(simulation_name, node_name, 'Received NUM_TXN: {}'.format(total_txn))
-    print('Total number of transactions to poll for: {}'.format(total_txn))
+    # logger.log(simulation_name, node_name, 'Received NUM_TXN: {}'.format(total_txn))
+    # print('Total number of transactions to poll for: {}'.format(total_txn))
 
     s.close()
-    logger.log(simulation_name, node_name, 'Closed current connection')
-    print('Closed current connection')
+    # logger.log(simulation_name, node_name, 'Closed current connection')
+    # print('Closed current connection')
 
     # Connecting to user01 ethereum node
     w3 = web3.Web3(web3.Web3.HTTPProvider('http://127.0.0.1:{}'.format(user01_rpc_port)))
-    logger.log(simulation_name, node_name, 'Connected to user01 ethereum node via RPC')
-    print('Connected to user01 ethereum node via RPC')
+    # logger.log(simulation_name, node_name, 'Connected to user01 ethereum node via RPC')
+    # print('Connected to user01 ethereum node via RPC')
 
     # Create a filter for latest blocks mined for polling use
     latest_block_filter = w3.eth.filter('latest')
 
     # Polling for mined blocks to detect if any transactions has been mined
     txn_count = 0
-    logger.log(simulation_name, node_name, 'Polling for new mined transactions')
-    print('Polling for new mined transactions')    
+    # logger.log(simulation_name, node_name, 'Polling for new mined transactions')
+    # print('Polling for new mined transactions')    
     while True:
         latest_blocks = latest_block_filter.get_new_entries()
         time_mined = time.time()
@@ -92,8 +93,8 @@ def run(settings):
 
                         txn_count += 1
                         if txn_count == total_txn:
-                            logger.log(simulation_name, node_name, 'Finished polling all {} transactions'.format(total_txn))
-                            logger.log(simulation_name, node_name, 'End of simulation')
-                            print('Finished polling all {} transactions'.format(total_txn))
-                            print('End of simulation')
+                            # logger.log(simulation_name, node_name, 'Finished polling all {} transactions'.format(total_txn))
+                            # logger.log(simulation_name, node_name, 'End of simulation')
+                            # print('Finished polling all {} transactions'.format(total_txn))
+                            # print('End of simulation')
                             exit()
