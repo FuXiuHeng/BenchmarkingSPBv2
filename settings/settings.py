@@ -3,7 +3,7 @@ from datetime import datetime
 settings = {
     # Simulation settings
     "num_users": 86, # Existing data has up to 85 unique users (use 86 to allow for 1 producer)
-    "simulation_name": datetime.now().strftime('%Y%m%d_%H%M_file1_1000_2000'),
+    "simulation_name": datetime.now().strftime('%Y%m%d_%H%M_file1_2000_40000'),
     "energy_price": 0.00001,
 
     # Data settings
@@ -14,8 +14,8 @@ settings = {
 
     # Partial data settings
     "use_partial_data": True, # If true, only run simulation with a subset of the data
-    "partial_data_start": 1000, # Start of the range of partial data to use
-    "partial_data_end": 2000, # End of the range of partial data to use
+    "partial_data_start": 2000, # Start of the range of partial data to use
+    "partial_data_end": 40000, # End of the range of partial data to use
 
     # Path settings
     "pk_dir_path": "private_keys",
