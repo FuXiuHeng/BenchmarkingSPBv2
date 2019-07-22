@@ -54,18 +54,29 @@ def process_mining_time(time_sent_path, time_mined_path):
 
         mining_time_dict[txn_hash] = mining_time
     
-    mining_time_dict["total"] = total_mining_time
-    return mining_time_dict
+    return total_mining_time, len(time_sent_keys), mining_time_dict
 
-def write_result(result_path, total_mining_time, total_gas_used):
+def write_result(result_path, mining_time_path, total_mining_time, total_gas_used, num_data, mining_time_dict):
     if not os.path.exists(result_path):
         f = open(result_path, 'w+')
+        f.write('num_data: {}\n'.format(num_data))
         f.write('total_mining_time: {} seconds\n'.format(total_mining_time))
         f.write('total_gas_used: {} gas\n'.format(total_gas_used))
+        f.write('average_mining_time: {} seconds\n'.format(total_mining_time / num_data))
+        f.write('average_gas_used: {} gas\n'.format(total_gas_used / num_data))
         f.close()
-        return True
+        print('Final results written into {}'.format(result_path))
     else: 
-        return False
+        print('Warning: {} already exists. Generation of this file is skipped'.format(result_path))
+    
+    if not os.path.exists(mining_time_path):
+        f = open(mining_time_path, 'w+')
+        for txn in mining_time_dict:
+            f.write('{} {}'.format(mining_time_dict[txn], txn))
+        f.close()
+        print('Mining time results written into {}'.format(mining_time_path))
+    else: 
+        print('Warning: {} already exists. Generation of this file is skipped'.format(mining_time_path))
 
 def process_gas_used(gas_used_path):
     gas_used_dict = log_to_dict(gas_used_path)
@@ -74,8 +85,7 @@ def process_gas_used(gas_used_path):
     for txn_hash in gas_used_dict:
         total_gas_used += int(gas_used_dict[txn_hash])
 
-    gas_used_dict["total"] = total_gas_used
-    return gas_used_dict
+    return total_gas_used, len(gas_used_dict.keys()), gas_used_dict
 
 
 def process_simulation_logs(simulation_name):
@@ -90,19 +100,20 @@ def process_simulation_logs(simulation_name):
     time_sent_path = '{}/results/time_sent.log'.format(log_dir)
     time_mined_path = '{}/results/time_mined.log'.format(log_dir)
     gas_used_path = '{}/results/gas_used.log'.format(log_dir)
+    mining_time_path = '{}/results/mining_time.log'.format(log_dir)
     final_result_path = '{}/results/final_result.log'.format(log_dir)
 
     # Processing the logs to compute the total mining time and gas used
-    mining_time_dict = process_mining_time(time_sent_path, time_mined_path)
-    gas_used_dict = process_gas_used(gas_used_path)
+    total_mining_time, num_data_1, mining_time_dict = process_mining_time(time_sent_path, time_mined_path)
+    total_gas_used, num_data_2, gas_used_dict = process_gas_used(gas_used_path)
+
+    if num_data_1 != num_data_2:
+        print('Error: Inconsistency between time logs and gas logs.')
+        exit()
 
     # Writing to result
-    write_success = write_result(final_result_path, mining_time_dict["total"], gas_used_dict["total"])
-    if write_success:
-        print('Completed processing logs for {}'.format(simulation_name))
-        print('Final results written into {}'.format(final_result_path))
-    else: 
-        print('Warning: {} already exists. Generation of result for simulation \'{}\' is skipped.'.format(final_result_path, simulation_name))
+    write_success = write_result(final_result_path, mining_time_path, total_mining_time, total_gas_used, num_data_1, mining_time_dict)
+    print('Completed processing logs for {}'.format(simulation_name))
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
