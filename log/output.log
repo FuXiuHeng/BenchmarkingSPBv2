@@ -4,5 +4,5 @@ Allowing time for threads to complete initialisation
 Using real data: ./data/energy_usage_data/file1.mat
 Completed parsing of real data
 Connected to poller: ('sn19029', 24000)
-Sent NUM_TXN to poller: 1741
+Sent NUM_TXN to poller: 15000
 Connected to miner: ('sn19029', 24001)
