@@ -2,18 +2,19 @@ from datetime import datetime
 
 settings = {
     # Simulation settings
-    "num_users": 86, # Existing data has up to 85 unique users (use 86 to allow for 1 producer)
-    "simulation_name": datetime.now().strftime('%Y%m%d_%H%M_file1_70000_100000'),
+    "num_users": 3, # Existing data has up to 85 unique users (use 86 to allow for 1 producer)
+    # "simulation_name": datetime.now().strftime('%Y%m%d_%H%M_file1_70000_100000'),
+    "simulation_name": datetime.now().strftime('%Y%m%d_%H%M_fake_data'),
     "energy_price": 0.00001,
 
     # Data settings
-    "use_fake_data": False,
+    "use_fake_data": True,
     #"data_path": './data/energy_usage_data/separated_users/user1/user1.mat', # Real data only
     "data_path": './data/energy_usage_data/file1.mat', # Real data only
     "num_fake_data": 5, # Fake data only
 
     # Partial data settings
-    "use_partial_data": True, # If true, only run simulation with a subset of the data
+    "use_partial_data": False, # If true, only run simulation with a subset of the data
     "partial_data_start": 70000, # Start of the range of partial data to use
     "partial_data_end": 100000, # End of the range of partial data to use
 

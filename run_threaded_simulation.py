@@ -56,12 +56,13 @@ time.sleep(5)
 
 # Data parsing
 if settings["use_fake_data"]: # Using fake data
+    num_users = settings["num_users"] - 1 # -1 because 1 user is reserved as producer
+    num_fake_data = settings["num_fake_data"]
+
     # logger.log(simulation_name, node_name, 'Using fake data, with {} total data and {} users'.format(num_fake_data, num_users))
     print('Using fake data, with {} total data and {} users'.format(num_fake_data, num_users))
 
-    num_users = settings["num_users"] - 1 # -1 because 1 user is reserved as producer
-    num_fake_data = settings["num_fake_data"]
-    energy_data = data.fake.generate_energy_usage_data(num_users, num_fake_data)
+    all_energy_data = data.fake.generate_energy_usage_data(num_users, num_fake_data)
 
     # logger.log(simulation_name, node_name, 'Completed generation of fake data')
     print('Completed generation of fake data')
@@ -142,7 +143,7 @@ for data_txn in energy_data:
         next_user_id += 1
 
     # logger.log(simulation_name, node_name, 'Customer {} used energy {}'.format(customer_id, energy_usage))
-    # print('Customer {} used energy {}'.format(customer_id, energy_usage))
+    print('Customer {} used energy {}'.format(customer_id, energy_usage))
 
     w3 = w3_dict[customer_id]
     nonce_base = nonce_base_dict[customer_id]
@@ -174,7 +175,7 @@ for data_txn in energy_data:
         + pickled_txn
     )
     # logger.log(simulation_name, node_name, 'Sent CTP to miner')
-    # print('Sent CTP to miner')
+    print('Sent CTP to miner')
 
 # Send END to miner to signal that there are no more CTPs
 miner_conn.sendall(overlay_nodes.helper.constants.END)
