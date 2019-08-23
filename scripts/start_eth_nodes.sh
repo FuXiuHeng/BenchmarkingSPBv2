@@ -31,7 +31,7 @@ done
 # Start all nodes in the network
 for node in $ALL_NODES
 do
-    nohup geth --datadir eth_nodes/$node --port ${eth_port[$node]} --rpc --rpcapi="db,eth,net,web3,personal,admin,miner" --rpcaddr 127.0.0.1 --rpcport ${rpc_port[$node]} --rpccorsdomain "*" --networkid 881188 --nat extip:127.0.0.1 --allow-insecure-unlock --nodiscover 1>/dev/null 2>/dev/null &
+    nohup geth --nousb --datadir eth_nodes/$node --port ${eth_port[$node]} --rpc --rpcapi="db,eth,net,web3,personal,admin,miner" --rpcaddr 127.0.0.1 --rpcport ${rpc_port[$node]} --rpccorsdomain "*" --networkid 881188 --nat extip:127.0.0.1 --allow-insecure-unlock --nodiscover 1>/dev/null 2>/dev/null &
 done
 echo "Started running all nodes in background"
 

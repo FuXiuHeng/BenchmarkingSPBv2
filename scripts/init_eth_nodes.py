@@ -3,7 +3,7 @@ import shutil
 import subprocess
 
 def initialise_eth_node(node_name, eth_dir_path, genesis_path):
-    cmd = "geth --verbosity 2 --datadir {}/{} init {}".format(eth_dir_path, node_name, genesis_path)
+    cmd = "geth --nousb --verbosity 2 --datadir {}/{} init {}".format(eth_dir_path, node_name, genesis_path)
     ret = subprocess.call(cmd, shell=True)
     if ret:
         raise Exception('init_eth_nodes.py: Unable to initialise {} node'.format(node_name))
