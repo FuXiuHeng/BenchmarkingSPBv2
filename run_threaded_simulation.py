@@ -100,12 +100,12 @@ communications.send_message(poller_conn ,packet_header, num_data)
 print('Sent NUM_TXN to poller: {}'.format(num_data))
 poller_conn.close()
 
-customer_to_user_dict = {} # customer_index_dict[customer_id] = user_id
-w3_dict = {}               # w3_dict[customer_id] = w3
-nonce_base_dict = {}       # nonce_base_dict[customer_id] = nonce_base
-nonce_counter_dict = {}    # nonce_counter_dict[customer_id] = nonce_counter
-user_rpc_port_dict = {}    # user_port_dict[customer_id] = user_rpc_port
-private_key_dict = {}      # private_key_dict[customer_id] = private_key
+customer_to_user_dict = {} # customer_to_user_dict[customer_id] = user_id
+w3_dict = {}               # w3_dict[user_id] = w3
+nonce_base_dict = {}       # nonce_base_dict[user_id] = nonce_base
+nonce_counter_dict = {}    # nonce_counter_dict[user_id] = nonce_counter
+user_rpc_port_dict = {}    # user_port_dict[user_id] = user_rpc_port
+private_key_dict = {}      # private_key_dict[user_id] = private_key
 
 next_user_id = 2 # user_id 1 reserved as producer
 
@@ -123,6 +123,8 @@ for data_txn in energy_data:
 
     if customer_id not in customer_to_user_dict:
         # Assign user id to customer id
+        if next_user_id > num_users + 1: # Ensures number of users does not exceed the number specified in the settings
+            next_user_id = 2
         customer_to_user_dict[customer_id] = next_user_id
 
         # Assign ethereum port, create web3 instance and initialise nonce info
@@ -134,22 +136,23 @@ for data_txn in energy_data:
             encrypted_key = f.read()
             private_key = w3.eth.account.decrypt(encrypted_key, password)
 
-        w3_dict[customer_id] = w3
-        nonce_base_dict[customer_id] = nonce_base
-        nonce_counter_dict[customer_id] = nonce_counter
-        user_rpc_port_dict[customer_id] = user_rpc_port
-        private_key_dict[customer_id] = private_key
+        w3_dict[next_user_id] = w3
+        nonce_base_dict[next_user_id] = nonce_base
+        nonce_counter_dict[next_user_id] = nonce_counter
+        user_rpc_port_dict[next_user_id] = user_rpc_port
+        private_key_dict[next_user_id] = private_key
 
         next_user_id += 1
 
-    # logger.log(simulation_name, node_name, 'Customer {} used energy {}'.format(customer_id, energy_usage))
-    print('Customer {} used energy {}'.format(customer_id, energy_usage))
+    # logger.log(simulation_name, node_name, 'User {} used energy {}'.format(user_id, energy_usage))
+    print('User {} used energy {}'.format(user_id, energy_usage))
 
-    w3 = w3_dict[customer_id]
-    nonce_base = nonce_base_dict[customer_id]
-    nonce_counter = nonce_counter_dict[customer_id]
-    user_rpc_port = user_rpc_port_dict[customer_id]
-    private_key = private_key_dict[customer_id]
+    user_id = customer_to_user_dict[customer_id]
+    w3 = w3_dict[user_id]
+    nonce_base = nonce_base_dict[user_id]
+    nonce_counter = nonce_counter_dict[user_id]
+    user_rpc_port = user_rpc_port_dict[user_id]
+    private_key = private_key_dict[user_id]
 
     producer_eth_addr = private_keys.getter.get_address('user01')
 
@@ -160,7 +163,7 @@ for data_txn in energy_data:
         'gasPrice': 234567897654,
         'nonce': nonce_base + nonce_counter
     }
-    nonce_counter_dict[customer_id] += 1
+    nonce_counter_dict[user_id] += 1
 
     w3.personal.unlockAccount(w3.eth.coinbase, password)
     signed_txn = w3.eth.account.signTransaction(txn, private_key)
