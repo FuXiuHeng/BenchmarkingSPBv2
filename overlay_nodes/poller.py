@@ -72,12 +72,13 @@ def run(settings):
     # print('Polling for new mined transactions')    
     while True:
         latest_blocks = latest_block_filter.get_new_entries()
-        time_mined = time.time()
+        # time_mined = time.time()
 
         if latest_blocks:
             block = w3.eth.getBlock(latest_blocks[0])
             for block_entry in latest_blocks:
                 block = w3.eth.getBlock(block_entry)
+                time_mined = block.timestamp
                 if block.transactions:
                     for txn in block.transactions:
                         txn_receipt = w3.eth.getTransactionReceipt(txn)
