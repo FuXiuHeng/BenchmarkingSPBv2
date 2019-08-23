@@ -19,12 +19,12 @@ def get_field_names(meta_info_file_path):
 
     return field_names
 
-# Parse the given data file, and returns an array of user energy transactions
+# Parse the given, original .mat data file, and returns an array of user energy transactions
 # with only the customer_id and aggregated energy usage fields.
 # The individual transactions are represented as dictionaries.
-def parse_energy_usage_file(user_data_file_path):
-    raw = loadmat(user_data_file_path)
-    var_name = whosmat(user_data_file_path)[0][0]
+def parse_energy_usage_file(matlab_data_file_path):
+    raw = loadmat(matlab_data_file_path)
+    var_name = whosmat(matlab_data_file_path)[0][0]
     data = raw[var_name]
 
     result = []
