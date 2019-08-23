@@ -1,2 +1,4 @@
 attrdict
-web3w
+mysql-connector-python
+scipy
+web3==4.9.1

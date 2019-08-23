@@ -1,7 +1,7 @@
 #!/bin/bash
 source ./settings/settings.sh
 
-USER_NODES=`seq -f "user%02g" $num_users` 
+USER_NODES=`seq -f "user%02g" $num_users`
 OTHER_NODES="miner"
 ALL_NODES="$OTHER_NODES $USER_NODES"
 
@@ -37,7 +37,7 @@ echo "Started running all nodes in background"
 
 # Sleep until all nodes have completely started
 echo "Waiting for all nodes to be ready"
-sleep 3
+sleep 5
 
 # Get enode information
 declare -A enode
