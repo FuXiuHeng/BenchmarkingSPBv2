@@ -55,8 +55,8 @@ print('Allowing time for threads to complete initialisation')
 time.sleep(5)
 
 # Data parsing
+num_users = settings["num_users"] - 1 # -1 because 1 user is reserved as producer
 if settings["use_fake_data"]: # Using fake data
-    num_users = settings["num_users"] - 1 # -1 because 1 user is reserved as producer
     num_fake_data = settings["num_fake_data"]
 
     # logger.log(simulation_name, node_name, 'Using fake data, with {} total data and {} users'.format(num_fake_data, num_users))
