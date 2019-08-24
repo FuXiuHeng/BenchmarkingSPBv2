@@ -144,10 +144,10 @@ for data_txn in energy_data:
 
         next_user_id += 1
 
+    user_id = customer_to_user_dict[customer_id]
     # logger.log(simulation_name, node_name, 'User {} used energy {}'.format(user_id, energy_usage))
     print('User {} used energy {}'.format(user_id, energy_usage))
 
-    user_id = customer_to_user_dict[customer_id]
     w3 = w3_dict[user_id]
     nonce_base = nonce_base_dict[user_id]
     nonce_counter = nonce_counter_dict[user_id]
