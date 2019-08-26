@@ -6,7 +6,7 @@ import data.constants as constants
 
 # Run the script to chunkify the specified .mat energy usage file
 # Usage: 
-#   python3 parser.py <matlab_data_file_path> <dest_name> <max_data_per_chunk>
+#   python3 chunkify_data.py <matlab_data_file_path> <dest_name> <max_data_per_chunk>
 #
 # Parse the given, original .mat data file, and divides up all the data into chunks of the given size.
 # Each chunk of data will be written to a separate .txt file in a specified folder.
@@ -17,7 +17,7 @@ if __name__ == '__main__':
     if len(sys.argv) != 4 and len(sys.argv) != 5:
         print('Error: Invalid number of arguments to the script.')
         print('Usage:')
-        print('  python3 parser.py <matlab_data_file_path> <dest_name> <max_data_per_chunk> [<chunks_limit>]')
+        print('  python3 chunkify_data.py <matlab_data_file_path> <dest_name> <max_data_per_chunk> [<chunks_limit>]')
         exit()
     
     matlab_data_file_path = sys.argv[1]
