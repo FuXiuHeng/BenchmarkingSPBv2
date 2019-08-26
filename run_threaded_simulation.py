@@ -101,6 +101,7 @@ print('Sent NUM_TXN to poller: {}'.format(num_data))
 poller_conn.close()
 
 customer_to_user_dict = {} # customer_to_user_dict[customer_id] = user_id
+user_id_dict = {}          # user_id_dict[user_id] = True (if at least once customer is assigned this user_id)
 w3_dict = {}               # w3_dict[user_id] = w3
 nonce_base_dict = {}       # nonce_base_dict[user_id] = nonce_base
 nonce_counter_dict = {}    # nonce_counter_dict[user_id] = nonce_counter
@@ -126,25 +127,27 @@ for data_txn in energy_data:
         if next_user_id > num_users + 1: # Ensures number of users does not exceed the number specified in the settings
             next_user_id = 2
         customer_to_user_dict[customer_id] = next_user_id
-
-        # Assign ethereum port, create web3 instance and initialise nonce info
-        user_rpc_port = user_rpc_port_start + next_user_id - 1
-        w3 = web3.Web3(web3.Web3.HTTPProvider('http://127.0.0.1:{}'.format(user_rpc_port)))
-        nonce_base = w3.eth.getTransactionCount(w3.eth.coinbase)
-        nonce_counter = 0
-        with open('./eth_nodes/user{:02d}/keystore/pk'.format(next_user_id)) as f:
-            encrypted_key = f.read()
-            private_key = w3.eth.account.decrypt(encrypted_key, password)
-
-        w3_dict[next_user_id] = w3
-        nonce_base_dict[next_user_id] = nonce_base
-        nonce_counter_dict[next_user_id] = nonce_counter
-        user_rpc_port_dict[next_user_id] = user_rpc_port
-        private_key_dict[next_user_id] = private_key
-
         next_user_id += 1
 
     user_id = customer_to_user_dict[customer_id]
+    if user_id not in user_id_dict:
+        # Assign ethereum port, create web3 instance and initialise nonce info
+        user_rpc_port = user_rpc_port_start + user_id - 1
+        w3 = web3.Web3(web3.Web3.HTTPProvider('http://127.0.0.1:{}'.format(user_rpc_port)))
+        nonce_base = w3.eth.getTransactionCount(w3.eth.coinbase)
+        nonce_counter = 0
+        with open('./eth_nodes/user{:02d}/keystore/pk'.format(user_id)) as f:
+            encrypted_key = f.read()
+            private_key = w3.eth.account.decrypt(encrypted_key, password)
+
+        w3_dict[user_id] = w3
+        nonce_base_dict[user_id] = nonce_base
+        nonce_counter_dict[user_id] = nonce_counter
+        user_rpc_port_dict[user_id] = user_rpc_port
+        private_key_dict[user_id] = private_key
+
+        user_id_dict[user_id] = True
+
     # logger.log(simulation_name, node_name, 'User {} used energy {}'.format(user_id, energy_usage))
     print('User {} used energy {}'.format(user_id, energy_usage))
 
