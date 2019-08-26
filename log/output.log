@@ -1,8 +1,191 @@
 Running SPB simulation
 Starting threads for miner_ctp, miner_erc and poller
 Allowing time for threads to complete initialisation
-Using real data: ./data/energy_usage_data/file1.mat
+Using real data: ./data/generated/users_85_data_1000.txt
 Completed parsing of real data
-Connected to poller: ('sn19029', 24000)
-Sent NUM_TXN to poller: 30000
-Connected to miner: ('sn19029', 24001)
+Connected to poller: ('Simulation', 24000)
+Sent NUM_TXN to poller: 1000
+Connected to miner: ('Simulation', 24001)
+User 2 used energy 942.0
+Sent CTP to miner
+User 3 used energy 1072.0
+Sent CTP to miner
+User 4 used energy 1448.0
+Sent CTP to miner
+User 5 used energy 1983.0
+Sent CTP to miner
+User 6 used energy 1362.0
+Sent CTP to miner
+User 7 used energy 769.0
+Sent CTP to miner
+User 8 used energy 1214.0
+Sent CTP to miner
+User 9 used energy 1033.0
+Sent CTP to miner
+User 10 used energy 1363.0
+Sent CTP to miner
+User 2 used energy 1725.0
+Sent CTP to miner
+User 11 used energy 1325.0
+Sent CTP to miner
+User 12 used energy 1446.0
+Sent CTP to miner
+User 12 used energy 945.0
+Sent CTP to miner
+User 7 used energy 1468.0
+Sent CTP to miner
+User 13 used energy 926.0
+Sent CTP to miner
+User 14 used energy 1729.0
+Sent CTP to miner
+User 7 used energy 1627.0
+Sent CTP to miner
+User 15 used energy 1754.0
+Sent CTP to miner
+User 6 used energy 1966.0
+Sent CTP to miner
+User 16 used energy 627.0
+Sent CTP to miner
+User 17 used energy 1989.0
+Sent CTP to miner
+User 18 used energy 1042.0
+Sent CTP to miner
+User 19 used energy 1341.0
+Sent CTP to miner
+User 20 used energy 1235.0
+Sent CTP to miner
+User 21 used energy 1539.0
+Sent CTP to miner
+User 17 used energy 717.0
+Sent CTP to miner
+User 22 used energy 1830.0
+Sent CTP to miner
+User 23 used energy 1351.0
+Sent CTP to miner
+User 24 used energy 1376.0
+Sent CTP to miner
+User 25 used energy 634.0
+Sent CTP to miner
+User 26 used energy 1400.0
+Sent CTP to miner
+User 27 used energy 1126.0
+Sent CTP to miner
+User 12 used energy 1208.0
+Sent CTP to miner
+User 28 used energy 1820.0
+Sent CTP to miner
+User 29 used energy 1592.0
+Sent CTP to miner
+User 30 used energy 1808.0
+Sent CTP to miner
+User 2 used energy 1215.0
+Sent CTP to miner
+User 3 used energy 1222.0
+Sent CTP to miner
+User 3 used energy 578.0
+Sent CTP to miner
+User 7 used energy 751.0
+Sent CTP to miner
+User 4 used energy 600.0
+Sent CTP to miner
+User 25 used energy 1965.0
+Sent CTP to miner
+User 5 used energy 1422.0
+Sent CTP to miner
+User 19 used energy 1715.0
+Sent CTP to miner
+User 6 used energy 901.0
+Sent CTP to miner
+User 7 used energy 696.0
+Sent CTP to miner
+User 25 used energy 1751.0
+Sent CTP to miner
+User 8 used energy 592.0
+Sent CTP to miner
+User 9 used energy 1734.0
+Sent CTP to miner
+User 10 used energy 510.0
+Sent CTP to miner
+User 11 used energy 874.0
+Sent CTP to miner
+User 12 used energy 1251.0
+Sent CTP to miner
+User 13 used energy 1477.0
+Sent CTP to miner
+User 14 used energy 647.0
+Sent CTP to miner
+User 15 used energy 651.0
+Sent CTP to miner
+User 7 used energy 1580.0
+Sent CTP to miner
+User 25 used energy 585.0
+Sent CTP to miner
+User 16 used energy 632.0
+Sent CTP to miner
+User 22 used energy 1494.0
+Sent CTP to miner
+User 4 used energy 1323.0
+Sent CTP to miner
+User 17 used energy 1125.0
+Sent CTP to miner
+User 12 used energy 1485.0
+Sent CTP to miner
+User 18 used energy 724.0
+Sent CTP to miner
+User 17 used energy 1439.0
+Sent CTP to miner
+User 27 used energy 1002.0
+Sent CTP to miner
+User 21 used energy 894.0
+Sent CTP to miner
+User 25 used energy 1092.0
+Sent CTP to miner
+User 19 used energy 1056.0
+Sent CTP to miner
+User 14 used energy 1195.0
+Sent CTP to miner
+User 5 used energy 813.0
+Sent CTP to miner
+User 23 used energy 618.0
+Sent CTP to miner
+User 15 used energy 820.0
+Sent CTP to miner
+User 2 used energy 616.0
+Sent CTP to miner
+User 25 used energy 1754.0
+Sent CTP to miner
+User 20 used energy 708.0
+Sent CTP to miner
+User 4 used energy 669.0
+Sent CTP to miner
+User 16 used energy 1123.0
+Sent CTP to miner
+User 21 used energy 972.0
+Sent CTP to miner
+User 22 used energy 944.0
+Sent CTP to miner
+User 23 used energy 1389.0
+Sent CTP to miner
+User 3 used energy 1395.0
+Sent CTP to miner
+User 24 used energy 1035.0
+Sent CTP to miner
+User 8 used energy 1045.0
+Sent CTP to miner
+User 8 used energy 1164.0
+Sent CTP to miner
+User 25 used energy 1506.0
+Sent CTP to miner
+User 27 used energy 1468.0
+Sent CTP to miner
+User 26 used energy 1930.0
+Sent CTP to miner
+User 27 used energy 531.0
+Sent CTP to miner
+User 28 used energy 1964.0
+Sent CTP to miner
+User 28 used energy 1123.0
+Sent CTP to miner
+User 29 used energy 1421.0
+Sent CTP to miner
+User 29 used energy 1222.0
