@@ -25,9 +25,9 @@ def get_field_names(meta_info_file_path):
 # Calls different parser functions according to the file extensions of the given file.
 def parse_energy_usage_file(data_file_path):
     if re.search("\.mat$", data_file_path):
-        return parse_energy_usage_matlab_file(data_file_path)
-    elif re.search("chunks.+\.txt$", data_file_path):
-        return parse_energy_usage_chunk_file(data_file_path)
+        return parse_energy_usage_mat_file(data_file_path)
+    elif re.search("txt$", data_file_path):
+        return parse_energy_usage_txt_file(data_file_path)
     else:
         raise Exception('Unsupported data file type. Currently only support .mat and .txt')
 
@@ -35,9 +35,9 @@ def parse_energy_usage_file(data_file_path):
 # Parse the given, original .mat data file, and returns an array of user energy transactions
 # with only the customer_id and aggregated energy usage data.
 # The individual transactions are represented as dictionaries.
-def parse_energy_usage_matlab_file(matlab_data_file_path):
-    raw = loadmat(matlab_data_file_path)
-    var_name = whosmat(matlab_data_file_path)[0][0]
+def parse_energy_usage_mat_file(mat_data_file_path):
+    raw = loadmat(mat_data_file_path)
+    var_name = whosmat(mat_data_file_path)[0][0]
     data = raw[var_name]
 
     result = []
@@ -54,11 +54,11 @@ def parse_energy_usage_matlab_file(matlab_data_file_path):
         
     return result
 
-# Parse the given .txt data chunk file, and returns an array of user energy transactions
+# Parse the given .txt data file, and returns an array of user energy transactions
 # with only the customer_id and aggregated energy usage data.
 # The individual transactions are represented as dictionaries.
-def parse_energy_usage_chunk_file(chunk_data_file_path):
-    f = open(chunk_data_file_path)
+def parse_energy_usage_txt_file(txt_data_file_path):
+    f = open(txt_data_file_path)
     line = f.readline()
     result = []
     while line:

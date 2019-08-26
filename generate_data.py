@@ -20,7 +20,7 @@ if __name__ == '__main__':
     num_data = int(sys.argv[3])
     
     dest_dir_path = './data/generated'
-    dest_file_path = os.path.join(dest_dir_path, dest_name)
+    dest_file_path = os.path.join(dest_dir_path, '{}.txt'.format(dest_name))
     os.makedirs(dest_dir_path, exist_ok=True)
 
     f = open(dest_file_path, 'w+')
