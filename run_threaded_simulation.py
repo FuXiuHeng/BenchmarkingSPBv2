@@ -118,6 +118,7 @@ print('Connected to miner: {}'.format((local_host, miner_ctp_overlay_port)))
 
 # For each energy transaction
 # Generate CTP transaction as a raw, signed ethereum transaction object
+data_no = 1
 for data_txn in energy_data:
     customer_id = data_txn[data.constants.CUSTOMER_ID_KEY]
     energy_usage = data_txn[data.constants.ENERGY_KEY]
@@ -148,8 +149,8 @@ for data_txn in energy_data:
 
         user_id_dict[user_id] = True
 
-    # logger.log(simulation_name, node_name, 'User {} used energy {}'.format(user_id, energy_usage))
-    print('User {} used energy {}'.format(user_id, energy_usage))
+    # logger.log(simulation_name, node_name, 'Transaction {}: User {} used energy {}'.format(data_no, user_id, energy_usage))
+    print('Transaction {}: User {} used energy {}'.format(data_no, user_id, energy_usage))
 
     w3 = w3_dict[user_id]
     nonce_base = nonce_base_dict[user_id]
@@ -182,6 +183,8 @@ for data_txn in energy_data:
     )
     # logger.log(simulation_name, node_name, 'Sent CTP to miner')
     print('Sent CTP to miner')
+
+    data_no += 1
 
 # Send END to miner to signal that there are no more CTPs
 miner_conn.sendall(overlay_nodes.helper.constants.END)
