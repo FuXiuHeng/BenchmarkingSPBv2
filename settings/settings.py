@@ -2,15 +2,15 @@ from datetime import datetime
 
 settings = {
     # Simulation settings
-    "num_users": 30, # Existing data has up to 85 unique users (use 86 to allow for 1 producer)
+    "num_users": 20, # Existing data has up to 85 unique users (use 86 to allow for 1 producer)
     # "simulation_name": datetime.now().strftime('%Y%m%d_%H%M_file1_70000_100000'),
-    "simulation_name": datetime.now().strftime('%Y%m%d_%H%M_users_30_data_1000'),
+    "simulation_name": datetime.now().strftime('%Y%m%d_%H%M_users_20_data_5000'),
     "energy_price": 0.00001,
 
     # Data settings
     "use_fake_data": False,
     #"data_path": './data/energy_usage_data/separated_users/user1/user1.mat', # Real data only
-    "data_path": './data/generated/users_85_data_1000.txt', # Real data only
+    "data_path": './data/generated/users_85_data_5000.txt', # Real data only
     "num_fake_data": 5, # Fake data only
 
     # Partial data settings

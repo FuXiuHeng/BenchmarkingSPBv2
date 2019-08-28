@@ -1,5 +1,5 @@
 # Simulation settings
-num_users=30
+num_users=20
 
 # Path settings
 pk_dir_path="private_keys"
