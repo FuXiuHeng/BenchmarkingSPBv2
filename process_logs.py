@@ -1,15 +1,16 @@
 import sys
 import os
-
+import math
+    
 # Column index constants for log files
-TIME_GAS_COL = 0 # Used for both time and gas 
+TIME_GAS_COL = 0 # Used for both time and gas
 PK_COL = 1
 TXN_COL = 2
 
-# Takes in a log file path for either time_
+# Takes in a log file path for either time or gas 
+# And creates a dictionary with key-value pair format:
+# { txn_hash : time or gas }
 def log_to_dict(log_path):
-    # Store info in dictionary with key-value pair format:
-    # { txn_hash : time or gas }
     result_dict = {}
 
     f = open(log_path)
@@ -24,110 +25,123 @@ def log_to_dict(log_path):
     f.close()
     return result_dict
 
-def process_mining_time(time_sent_path, time_mined_path):
-    time_sent_dict = log_to_dict(time_sent_path)
-    time_mined_dict = log_to_dict(time_mined_path)
-    
-    time_sent_keys = list(time_sent_dict.keys())
-    time_mined_keys = list(time_mined_dict.keys())
-
-    if len(time_sent_keys) != len(time_sent_keys):
-        print('Error: Inconsistent number of transactions between time_sent and time_mined logs')
-        print('time_sent log: {}'.format(time_sent_path))
-        print('time_mined log: {}'.format(time_mined_path))
-        exit()
-
-    mining_time_dict = {}
-    total_mining_time = 0
-    for txn_hash in time_sent_keys:
-        if txn_hash not in time_mined_dict:
-            print('Error: Inconsistency between time_sent and time_mined logs.')
-            print('{} exists in time_sent log but not in time_mined log.')
-            print('time_sent log: {}'.format(time_sent_path))
-            print('time_mined log: {}'.format(time_mined_path))
-            exit()
-        
-        time_sent = time_sent_dict[txn_hash]
-        time_mined = time_mined_dict[txn_hash]
-        mining_time = float(time_mined) - float(time_sent)
-        total_mining_time += mining_time
-
-        mining_time_dict[txn_hash] = mining_time
-    
-    return total_mining_time, len(time_sent_keys), mining_time_dict
-
-def write_result(result_path, mining_time_path, total_mining_time, total_gas_used, num_data, mining_time_dict):
-    if not os.path.exists(result_path):
-        f = open(result_path, 'w+')
-        f.write('num_data: {}\n'.format(num_data))
-        f.write('total_mining_time: {} seconds\n'.format(total_mining_time))
-        f.write('total_gas_used: {} gas\n'.format(total_gas_used))
-        f.write('average_mining_time: {} seconds\n'.format(total_mining_time / num_data))
-        f.write('average_gas_used: {} gas\n'.format(total_gas_used / num_data))
-        f.close()
-        print('Final results written into {}'.format(result_path))
-    else: 
-        print('Warning: {} already exists. Generation of this file is skipped'.format(result_path))
-    
-    if not os.path.exists(mining_time_path):
-        f = open(mining_time_path, 'w+')
-        for txn in mining_time_dict:
-            f.write('{} {}'.format(mining_time_dict[txn], txn))
-        f.close()
-        print('Mining time results written into {}'.format(mining_time_path))
-    else: 
-        print('Warning: {} already exists. Generation of this file is skipped'.format(mining_time_path))
-
-def process_gas_used(gas_used_path):
-    gas_used_dict = log_to_dict(gas_used_path)
-
-    total_gas_used = 0
-    for txn_hash in gas_used_dict:
-        total_gas_used += int(gas_used_dict[txn_hash])
-
-    return total_gas_used, len(gas_used_dict.keys()), gas_used_dict
-
-
-def process_simulation_logs(simulation_name):
-    log_dir = './log/{}'.format(simulation_name)
-
-    # Check if specified simulation name exists
-    if not os.path.isdir(log_dir):
-        print('Error: No directory named {}'.format(log_dir))
-        print('Ensure the specified simulation name exists')
-        exit()
-
-    time_sent_path = '{}/results/time_sent.log'.format(log_dir)
-    time_mined_path = '{}/results/time_mined.log'.format(log_dir)
-    gas_used_path = '{}/results/gas_used.log'.format(log_dir)
-    mining_time_path = '{}/results/mining_time.log'.format(log_dir)
-    final_result_path = '{}/results/final_result.log'.format(log_dir)
-
-    # Processing the logs to compute the total mining time and gas used
-    total_mining_time, num_data_1, mining_time_dict = process_mining_time(time_sent_path, time_mined_path)
-    total_gas_used, num_data_2, gas_used_dict = process_gas_used(gas_used_path)
-
-    if num_data_1 != num_data_2:
-        print('Error: Inconsistency between time logs and gas logs.')
-        exit()
-
-    # Writing to result
-    write_success = write_result(final_result_path, mining_time_path, total_mining_time, total_gas_used, num_data_1, mining_time_dict)
-    print('Completed processing logs for {}'.format(simulation_name))
-
 if __name__ == "__main__":
-    if len(sys.argv) != 2:
+    # Script usage check
+    if len(sys.argv) != 2 and len(sys.argv) != 3:
         print('Error: Invalid number of arguments.')
-        print('Usage: python3 process_logs.py (all | ALL | __simulation_name__)')
+        print('Usage: python3 process_logs.py (all | ALL | __simulation_name__) [-f]')
         exit()
-
+    
     input_simulation_name = sys.argv[1]
+    if len(sys.argv) == 3 and sys.argv[2] == "-f":
+        force_flag = True
+    else:
+        force_flag = False
 
-    # Process all unprocessed logs in the logs directory
+    simulation_list = []
+    # Process all unprocessed logs in the log directory
     if input_simulation_name == 'all' or input_simulation_name == 'ALL':
         for simulation_name in os.listdir('./log'):
-            process_simulation_logs(simulation_name)
-
+            simulation_list.append(simulation_name)
+ 
     # Process only the log of the specified simulation name
-    else:
-        process_simulation_logs(input_simulation_name)
+    else: 
+        simulation_list.append(input_simulation_name)
+
+    for simulation_name in simulation_list:
+        log_dir = './log/{}'.format(simulation_name)
+
+        # Check if specified simulation name exists
+        if not os.path.isdir(log_dir):
+            print('Warning: The directory {} does not exist.'.format(log_dir))
+            continue
+        
+        time_sent_path = '{}/results/time_sent.log'.format(log_dir)
+        time_mined_path = '{}/results/time_mined.log'.format(log_dir)
+        gas_used_path = '{}/results/gas_used.log'.format(log_dir)
+        mining_time_path = '{}/results/mining_time.log'.format(log_dir)
+        final_result_path = '{}/results/final_result.log'.format(log_dir)
+
+        if not force_flag and os.path.exists(final_result_path):
+            print('Warning: {} already exists. Skipping the generation of this result file'.format(final_result_path))
+
+        time_sent_dict = log_to_dict(time_sent_path)
+        time_mined_dict = log_to_dict(time_mined_path)
+        gas_used_dict = log_to_dict(gas_used_path)
+        time_sent_keys = list(time_sent_dict.keys())
+        time_mined_keys = list(time_mined_dict.keys())
+        gas_used_keys = list(gas_used_dict.keys())
+
+        if len(time_sent_keys) != len(time_mined_keys) or len(time_sent_keys) != len(gas_used_keys):
+            print('Warning: Inconsistent number of transactions between time_sent and time_mined logs')
+            print('time_sent log: {}'.format(time_sent_path))
+            print('time_mined log: {}'.format(time_mined_path))
+            print('gas_used log: {}'.format(gas_used_path))
+            continue
+
+        mining_time_dict = {}
+        total_mining_time = 0
+        num_txn = len(time_sent_keys)
+        
+        # Computing total mining time and mean mining time
+        for txn_hash in time_sent_keys:
+            if txn_hash not in time_mined_dict:
+                print('Warning: Inconsistency between time_sent and time_mined logs.')
+                print('{} exists in time_sent log but not in time_mined log.')
+                print('time_sent log: {}'.format(time_sent_path))
+                print('time_mined log: {}'.format(time_mined_path))
+                continue
+
+            time_sent = time_sent_dict[txn_hash]
+            time_mined = time_mined_dict[txn_hash]
+            mining_time = float(time_mined) - float(time_sent)
+            total_mining_time += mining_time
+            mining_time_dict[txn_hash] = mining_time
+
+        mean_mining_time = total_mining_time / num_txn
+
+        # Computing standard deviation and variance of mining time
+        variance_mining_time = 0
+        for txn_hash in time_sent_keys:
+            time_sent = time_sent_dict[txn_hash]
+            time_mined = time_mined_dict[txn_hash]
+            mining_time = float(time_mined) - float(time_sent)
+            diff = mining_time - mean_mining_time
+            variance_mining_time += diff * diff
+        
+        variance_mining_time = variance_mining_time / (num_txn - 1)
+        sd_mining_time = math.sqrt(variance_mining_time)
+
+        # Computing total gas used and mean gas used
+        total_gas_used = 0
+        for txn_hash in gas_used_dict:
+            total_gas_used += int(gas_used_dict[txn_hash])
+
+        mean_gas_used = total_gas_used / num_txn
+
+        # Computing standard deviation and variance of gas used
+        variance_gas_used = 0
+        for txn_hash in gas_used_dict:
+            diff = int(gas_used_dict[txn_hash]) - mean_gas_used
+            variance_gas_used += diff * diff
+
+        variance_gas_used = variance_gas_used / (num_txn - 1)
+        sd_gas_used = math.sqrt(variance_gas_used)
+
+        # Writing results to file
+        with open(final_result_path, 'w+') as f:
+            f.write("Number of transactions: {}\n".format(num_txn))
+            f.write("\n")
+            f.write("Mining Time in seconds\n")
+            f.write("----------------------------------------------\n")
+            f.write("Total              : {}\n".format(total_mining_time))
+            f.write("Mean               : {}\n".format(mean_mining_time))
+            f.write("Variance           : {}\n".format(variance_mining_time))
+            f.write("Standard deviation : {}\n".format(sd_mining_time))
+            f.write("\n")
+            f.write("Gas Used in seconds\n")
+            f.write("----------------------------------------------\n")
+            f.write("Total              : {}\n".format(total_gas_used))
+            f.write("Mean               : {}\n".format(mean_gas_used))
+            f.write("Variance           : {}\n".format(variance_gas_used))
+            f.write("Standard deviation : {}\n".format(sd_gas_used))
