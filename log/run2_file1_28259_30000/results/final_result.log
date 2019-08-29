@@ -1,5 +1,15 @@
-num_data: 1741
-total_mining_time: 5658.21982216835 seconds
-total_gas_used: 36561000 gas
-average_mining_time: 3.2499826663804425 seconds
-average_gas_used: 21000.0 gas
+Number of transactions: 1741
+
+Mining Time in seconds
+----------------------------------------------
+Total              : 5658.21982216835
+Mean               : 3.2499826663804425
+Variance           : 4.693891958088393
+Standard deviation : 2.1665391660637923
+
+Gas Used in seconds
+----------------------------------------------
+Total              : 36561000
+Mean               : 21000.0
+Variance           : 0.0
+Standard deviation : 0.0
