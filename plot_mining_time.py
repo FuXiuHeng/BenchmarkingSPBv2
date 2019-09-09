@@ -1,11 +1,15 @@
 import matplotlib.pyplot as plt 
 import os
+import re
 import sys
+
+# Line indexing constants for final_result.log
+MEAN_MINING_TIME_LINE_NO = 5
+SD_MINING_TIME_LINE_NO = 7
 
 # Plot the mining time in desired log directory name
 # Usage:
 #   python3 plot_mining_time.py <log_dir_name> [<title> <subtitile>]
-
 if __name__ == '__main__':
     if len(sys.argv) < 2 or len(sys.argv) >= 5:
         print('Error: Invalid number of arguments to the script.')
@@ -24,10 +28,13 @@ if __name__ == '__main__':
         subtitle = "Plot generated from log: {}".format(log_dir_name)
         
     file_path = './log/{}/results/mining_time.log'.format(log_dir_name)
+    result_path = './log/{}/results/final_result.log'.format(log_dir_name)
     if not os.path.isfile(file_path):
         raise Exception('File {} does not exist'.format(file_path))
+    if not os.path.isfile(result_path):
+        raise Exception('File {} does not exist. Please process the logs first.'.format(result_path))
     
-    # Parse the mining_time.log
+    # Parse the mining_time.log and collect the mining time data for plotting
     all_txn_no = []
     all_mining_time = []
     txn_no = 0
@@ -38,11 +45,24 @@ if __name__ == '__main__':
             all_txn_no.append(txn_no)
             all_mining_time.append(mining_time)
             txn_no = txn_no + 1
-           
+
+    # Extract the pre-computed mean and standard deviation of the mining time
+    with open(result_path, 'r') as f:
+        lines = f.readlines()
+        mean_line = lines[MEAN_MINING_TIME_LINE_NO]
+        sd_line = lines[SD_MINING_TIME_LINE_NO]
+
+        mean = float(re.findall("[0-9]+\.[0-9]+", mean_line)[0])
+        sd = float(re.findall("[0-9]+\.[0-9]+", sd_line)[0])
+
     # Plot the graph: mining times against transaction no.
     plt.plot(all_txn_no, all_mining_time)
     plt.xlabel('Transaction No.')
     plt.ylabel('Mining Time (s)')
     plt.suptitle(title, fontsize=16)
     plt.title(subtitle, fontsize=10)
+    plt.subplots_adjust(bottom=0.18)
+    text = "Mean = {0:.3f}, Standard Deviation = {1:.3f}".format(mean, sd)
+    plt.figtext(0.5,0.05, text, fontsize=9, va="top", ha="center")
+    plt.savefig("./plots/{}.png".format(log_dir_name))
     plt.show()
