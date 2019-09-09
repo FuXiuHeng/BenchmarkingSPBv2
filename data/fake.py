@@ -9,9 +9,9 @@ def generate_energy_usage_data(num_consumers, num_data):
     for i in range(0, num_data):
         row_data = {}
         if i < num_consumers:
-            row_data[constants.CUSTOMER_ID_KEY] = consumer_id_base + i
+            row_data[constants.CONSUMER_ID_KEY] = consumer_id_base + i
         else:
-            row_data[constants.CUSTOMER_ID_KEY] = consumer_id_base + random.randint(0, num_consumers - 1)
+            row_data[constants.CONSUMER_ID_KEY] = consumer_id_base + random.randint(0, num_consumers - 1)
         row_data[constants.ENERGY_KEY] = 500
         result.append(row_data)
 

@@ -120,7 +120,7 @@ print('Connected to miner: {}'.format((local_host, miner_ctp_overlay_port)))
 # Generate CTP transaction as a raw, signed ethereum transaction object
 data_no = 1
 for data_txn in energy_data:
-    customer_id = data_txn[data.constants.CUSTOMER_ID_KEY]
+    customer_id = data_txn[data.constants.CONSUMER_ID_KEY]
     energy_usage = data_txn[data.constants.ENERGY_KEY]
 
     if customer_id not in customer_to_user_dict:

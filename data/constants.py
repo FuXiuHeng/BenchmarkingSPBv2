@@ -26,5 +26,6 @@ OVEN = 21
 WH = 22
 
 # Parsed data key constants
-CUSTOMER_ID_KEY = 'customer_id'
+CONSUMER_ID_KEY = 'consumer_id'
+PRODUCER_ID_KEY = 'producer_id'
 ENERGY_KEY = 'energy'

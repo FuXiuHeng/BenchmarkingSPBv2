@@ -43,7 +43,7 @@ def parse_energy_usage_mat_file(mat_data_file_path):
     result = []
     for row in range(0, len(data)):
         row_data = {}
-        row_data[constants.CUSTOMER_ID_KEY] = int(data[row][constants.CUSTOMER_ID][0])
+        row_data[constants.CONSUMER_ID_KEY] = int(data[row][constants.CUSTOMER_ID][0])
 
         total_energy_usage = 0
         for i in range(constants.ENERGY, constants.NUM_FIELDS):
@@ -59,13 +59,15 @@ def parse_energy_usage_mat_file(mat_data_file_path):
 # The individual transactions are represented as dictionaries.
 def parse_energy_usage_txt_file(txt_data_file_path):
     f = open(txt_data_file_path)
+    line = f.readline() # First line is purely descriptive
     line = f.readline()
     result = []
     while line:
         row_data = {}
         raw_data = line.split(' ')
-        row_data[constants.CUSTOMER_ID_KEY] = int(raw_data[0])
+        row_data[constants.CONSUMER_ID_KEY] = int(raw_data[0])
         row_data[constants.ENERGY_KEY] = float(raw_data[1])
+        row_data[constants.PRODUCER_KEY] = int(raw_data[2])
         result.append(row_data)
         line = f.readline()
 
