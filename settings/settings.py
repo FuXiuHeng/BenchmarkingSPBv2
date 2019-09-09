@@ -8,10 +8,7 @@ settings = {
     "energy_price": 0.00001,
 
     # Data settings
-    "use_fake_data": False,
-    #"data_path": './data/energy_usage_data/separated_users/user1/user1.mat', # Real data only
-    "data_path": './data/generated/users_85_data_5000.txt', # Real data only
-    "num_fake_data": 5, # Fake data only
+    "data_path": './data/generated/users_85_data_5000.txt', 
 
     # Partial data settings
     "use_partial_data": False, # If true, only run simulation with a subset of the data

@@ -12,7 +12,6 @@ import time
 import web3
 
 import data.constants
-import data.fake
 import data.parser
 import private_keys.getter
 import overlay_nodes.helper.communications as communications
@@ -56,25 +55,13 @@ time.sleep(5)
 
 # Data parsing
 num_users = settings["num_users"] - 1 # -1 because 1 user is reserved as producer
-if settings["use_fake_data"]: # Using fake data
-    num_fake_data = settings["num_fake_data"]
+data_path = settings["data_path"]
 
-    # logger.log(simulation_name, node_name, 'Using fake data, with {} total data and {} users'.format(num_fake_data, num_users))
-    print('Using fake data, with {} total data and {} users'.format(num_fake_data, num_users))
-
-    all_energy_data = data.fake.generate_energy_usage_data(num_users, num_fake_data)
-
-    # logger.log(simulation_name, node_name, 'Completed generation of fake data')
-    print('Completed generation of fake data')
-
-else: # Using real data
-    data_path = settings["data_path"]
-    # logger.log(simulation_name, node_name, 'Using real data: {}'.format(data_path))
-    print('Using real data: {}'.format(data_path))
-
-    all_energy_data = data.parser.parse_energy_usage_file(data_path)
-    # logger.log(simulation_name, node_name, 'Completed parsing of real data')
-    print('Completed parsing of real data')
+# logger.log(simulation_name, node_name, 'Parsing data: {}'.format(data_path))
+print('Parsing data: {}'.format(data_path))
+all_energy_data = data.parser.parse_energy_usage_file(data_path)
+# logger.log(simulation_name, node_name, 'Completed parsing of real data')
+print('Completed parsing of real data')
 
 
 # Partial data
