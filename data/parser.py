@@ -67,7 +67,7 @@ def parse_energy_usage_txt_file(txt_data_file_path):
         raw_data = line.split(' ')
         row_data[constants.CONSUMER_ID_KEY] = int(raw_data[0])
         row_data[constants.ENERGY_KEY] = float(raw_data[1])
-        row_data[constants.PRODUCER_KEY] = int(raw_data[2])
+        row_data[constants.PRODUCER_ID_KEY] = int(raw_data[2])
         result.append(row_data)
         line = f.readline()
 

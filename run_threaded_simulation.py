@@ -144,8 +144,8 @@ for data_txn in energy_data:
 
         user_id_dict[consumer_user_id] = True
 
-    # logger.log(simulation_name, node_name, 'Transaction {}: User {} used energy {}'.format(data_no, consumer_user_id, energy_usage))
-    print('Transaction {}: User {} used energy {}'.format(data_no, consumer_user_id, energy_usage))
+    # logger.log(simulation_name, node_name, 'Transaction {}: Prosumer {} bought {} energy from prosumer {}'.format(data_no, consumer_user_id, energy_usage, producer_user_id))
+    print('Transaction {}: Prosumer {} bought {} energy from prosumer {}'.format(data_no, consumer_user_id, energy_usage, producer_user_id))
 
     w3 = w3_dict[consumer_user_id]
     nonce_base = nonce_base_dict[consumer_user_id]
