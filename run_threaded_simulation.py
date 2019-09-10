@@ -54,7 +54,7 @@ print('Allowing time for threads to complete initialisation')
 time.sleep(5)
 
 # Data parsing
-num_users = settings["num_users"] - 1 # -1 because 1 user is reserved as producer
+num_users = settings["num_users"]
 data_path = settings["data_path"]
 
 # logger.log(simulation_name, node_name, 'Parsing data: {}'.format(data_path))
@@ -62,7 +62,6 @@ print('Parsing data: {}'.format(data_path))
 all_energy_data = data.parser.parse_energy_usage_file(data_path)
 # logger.log(simulation_name, node_name, 'Completed parsing of real data')
 print('Completed parsing of real data')
-
 
 # Partial data
 if settings["use_partial_data"]:
@@ -87,7 +86,7 @@ communications.send_message(poller_conn ,packet_header, num_data)
 print('Sent NUM_TXN to poller: {}'.format(num_data))
 poller_conn.close()
 
-customer_to_user_dict = {} # customer_to_user_dict[customer_id] = user_id
+prosumer_to_user_dict = {} # prosumer_to_user_dict[prosumer_id] = user_id
 user_id_dict = {}          # user_id_dict[user_id] = True (if at least once customer is assigned this user_id)
 w3_dict = {}               # w3_dict[user_id] = w3
 nonce_base_dict = {}       # nonce_base_dict[user_id] = nonce_base
@@ -95,7 +94,7 @@ nonce_counter_dict = {}    # nonce_counter_dict[user_id] = nonce_counter
 user_rpc_port_dict = {}    # user_port_dict[user_id] = user_rpc_port
 private_key_dict = {}      # private_key_dict[user_id] = private_key
 
-next_user_id = 2 # user_id 1 reserved as producer
+next_user_id = 1
 
 # Connect to the CTP miner socket
 miner_conn = socket.socket()
@@ -107,45 +106,54 @@ print('Connected to miner: {}'.format((local_host, miner_ctp_overlay_port)))
 # Generate CTP transaction as a raw, signed ethereum transaction object
 data_no = 1
 for data_txn in energy_data:
-    customer_id = data_txn[data.constants.CONSUMER_ID_KEY]
+    consumer_id = data_txn[data.constants.CONSUMER_ID_KEY]
+    producer_id = data_txn[data.constants.PRODUCER_ID_KEY]
     energy_usage = data_txn[data.constants.ENERGY_KEY]
 
-    if customer_id not in customer_to_user_dict:
-        # Assign user id to customer id
-        if next_user_id > num_users + 1: # Ensures number of users does not exceed the number specified in the settings
-            next_user_id = 2
-        customer_to_user_dict[customer_id] = next_user_id
+    # Assign user id to new prosumers
+    if consumer_id not in prosumer_to_user_dict:
+        if next_user_id > num_users: # Ensures number of users does not exceed the number specified in the settings
+            next_user_id = 1
+        prosumer_to_user_dict[consumer_id] = next_user_id
         next_user_id += 1
+        
+    if producer_id not in prosumer_to_user_dict:
+        if next_user_id > num_users: # Ensures number of users does not exceed the number specified in the settings
+            next_user_id = 1
+        prosumer_to_user_dict[producer_id] = next_user_id
+        next_user_id += 1
+        
+    # Assign ethereum port, create web3 instance and initialise nonce info
+    consumer_user_id = prosumer_to_user_dict[consumer_id]
+    producer_user_id = prosumer_to_user_dict[producer_id]
 
-    user_id = customer_to_user_dict[customer_id]
-    if user_id not in user_id_dict:
-        # Assign ethereum port, create web3 instance and initialise nonce info
-        user_rpc_port = user_rpc_port_start + user_id - 1
+    if consumer_user_id not in user_id_dict:
+        user_rpc_port = user_rpc_port_start + consumer_user_id - 1
         w3 = web3.Web3(web3.Web3.HTTPProvider('http://127.0.0.1:{}'.format(user_rpc_port)))
         nonce_base = w3.eth.getTransactionCount(w3.eth.coinbase)
         nonce_counter = 0
-        with open('./eth_nodes/user{:02d}/keystore/pk'.format(user_id)) as f:
+        with open('./eth_nodes/user{:02d}/keystore/pk'.format(consumer_user_id)) as f:
             encrypted_key = f.read()
             private_key = w3.eth.account.decrypt(encrypted_key, password)
 
-        w3_dict[user_id] = w3
-        nonce_base_dict[user_id] = nonce_base
-        nonce_counter_dict[user_id] = nonce_counter
-        user_rpc_port_dict[user_id] = user_rpc_port
-        private_key_dict[user_id] = private_key
+        w3_dict[consumer_user_id] = w3
+        nonce_base_dict[consumer_user_id] = nonce_base
+        nonce_counter_dict[consumer_user_id] = nonce_counter
+        user_rpc_port_dict[consumer_user_id] = user_rpc_port
+        private_key_dict[consumer_user_id] = private_key
 
-        user_id_dict[user_id] = True
+        user_id_dict[consumer_user_id] = True
 
-    # logger.log(simulation_name, node_name, 'Transaction {}: User {} used energy {}'.format(data_no, user_id, energy_usage))
-    print('Transaction {}: User {} used energy {}'.format(data_no, user_id, energy_usage))
+    # logger.log(simulation_name, node_name, 'Transaction {}: User {} used energy {}'.format(data_no, consumer_user_id, energy_usage))
+    print('Transaction {}: User {} used energy {}'.format(data_no, consumer_user_id, energy_usage))
 
-    w3 = w3_dict[user_id]
-    nonce_base = nonce_base_dict[user_id]
-    nonce_counter = nonce_counter_dict[user_id]
-    user_rpc_port = user_rpc_port_dict[user_id]
-    private_key = private_key_dict[user_id]
+    w3 = w3_dict[consumer_user_id]
+    nonce_base = nonce_base_dict[consumer_user_id]
+    nonce_counter = nonce_counter_dict[consumer_user_id]
+    user_rpc_port = user_rpc_port_dict[consumer_user_id]
+    private_key = private_key_dict[consumer_user_id]
 
-    producer_eth_addr = private_keys.getter.get_address('user01')
+    producer_eth_addr = private_keys.getter.get_address('user{:02d}'.format(producer_user_id))
 
     txn = {
         'to': w3.toChecksumAddress(producer_eth_addr),
@@ -154,7 +162,7 @@ for data_txn in energy_data:
         'gasPrice': 234567897654,
         'nonce': nonce_base + nonce_counter
     }
-    nonce_counter_dict[user_id] += 1
+    nonce_counter_dict[consumer_user_id] += 1
 
     w3.personal.unlockAccount(w3.eth.coinbase, password)
     signed_txn = w3.eth.account.signTransaction(txn, private_key)
