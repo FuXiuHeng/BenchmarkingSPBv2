@@ -164,7 +164,7 @@ for data_txn in energy_data:
     }
     nonce_counter_dict[consumer_user_id] += 1
 
-    w3.personal.unlockAccount(w3.eth.coinbase, password)
+    w3.geth.personal.unlockAccount(w3.eth.coinbase, password)
     signed_txn = w3.eth.account.signTransaction(txn, private_key)
     copied_txn = AttrDict(signed_txn) # This step prevents type error when unpickling on the receiver node
     pickled_txn = pickle.dumps(copied_txn) # Convert python object to byte stream
