@@ -27,8 +27,8 @@ if __name__ == '__main__':
     else:
         subtitle = "Plot generated from log: {}".format(log_dir_name)
         
-    file_path = './log/{}/results/mining_time.log'.format(log_dir_name)
-    result_path = './log/{}/results/final_result.log'.format(log_dir_name)
+    file_path = './log/spb/{}/mining_time.log'.format(log_dir_name)
+    result_path = './log/spb/{}/final_result.log'.format(log_dir_name)
     if not os.path.isfile(file_path):
         raise Exception('File {} does not exist'.format(file_path))
     if not os.path.isfile(result_path):

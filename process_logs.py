@@ -49,18 +49,18 @@ if __name__ == "__main__":
         simulation_list.append(input_simulation_name)
 
     for simulation_name in simulation_list:
-        log_dir = './log/{}'.format(simulation_name)
+        log_dir = './log/spb/{}'.format(simulation_name)
 
         # Check if specified simulation name exists
         if not os.path.isdir(log_dir):
             print('Warning: The directory {} does not exist.'.format(log_dir))
             continue
         
-        time_sent_path = '{}/results/time_sent.log'.format(log_dir)
-        time_mined_path = '{}/results/time_mined.log'.format(log_dir)
-        gas_used_path = '{}/results/gas_used.log'.format(log_dir)
-        mining_time_path = '{}/results/mining_time.log'.format(log_dir)
-        final_result_path = '{}/results/final_result.log'.format(log_dir)
+        time_sent_path = '{}/time_sent.log'.format(log_dir)
+        time_mined_path = '{}/time_mined.log'.format(log_dir)
+        gas_used_path = '{}/gas_used.log'.format(log_dir)
+        mining_time_path = '{}/mining_time.log'.format(log_dir)
+        final_result_path = '{}/final_result.log'.format(log_dir)
 
         if not force_flag and os.path.exists(final_result_path):
             print('Warning: {} already exists. Skipping the generation of this result file'.format(final_result_path))
