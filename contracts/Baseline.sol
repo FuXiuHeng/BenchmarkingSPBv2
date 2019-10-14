@@ -19,7 +19,7 @@ contract Baseline {
 
     function confirmReceipt() public payable {
         address from = msg.sender;
-        if (from == consumer) {
+        if (from == consumer && curValue >= tradeValue) {
             producer.transfer(tradeValue);
         }
     }
