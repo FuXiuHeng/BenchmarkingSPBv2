@@ -2,7 +2,7 @@ from datetime import datetime
 
 settings = {
     # Simulation settings
-    "num_users": 2, # Existing data has up to 85 unique users (use 86 to allow for 1 producer)
+    "num_users": 20, # Existing data has up to 85 unique users (use 86 to allow for 1 producer)
     # "simulation_name": datetime.now().strftime('%Y%m%d_%H%M_file1_70000_100000'),
     "simulation_name": datetime.now().strftime('%Y%m%d_%H%M_users_20_data_5000'),
     "energy_price": 0.00001,
@@ -40,5 +40,8 @@ settings = {
     "poller_port": 24000,
     "miner_ctp_overlay_port": 24001,
     "miner_erc_overlay_port": 24002,
-    "consumer_overlay_port": 24003
+    "consumer_overlay_port": 24003,
+
+    # Baseline contract path
+    "contract_path": "./contracts/Baseline.sol"
 }
