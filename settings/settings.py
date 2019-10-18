@@ -8,7 +8,7 @@ settings = {
     "energy_price": 0.00001,
 
     # Data settings
-    "data_path": './data/generated/users_85_data_5000.txt', 
+    "data_path": './data/generated/users_85_data_5000.txt',
 
     # Partial data settings
     "use_partial_data": False, # If true, only run simulation with a subset of the data
