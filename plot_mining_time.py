@@ -9,26 +9,27 @@ SD_MINING_TIME_LINE_NO = 7
 
 # Plot the mining time in desired log directory name
 # Usage:
-#   python3 plot_mining_time.py <log_dir_name> [<title> <subtitile>]
+#   python3 plot_mining_time.py <simulation_name> [<title> <subtitile>]
 if __name__ == '__main__':
-    if len(sys.argv) < 2 or len(sys.argv) >= 5:
+    if len(sys.argv) < 2 or len(sys.argv) >= 6:
         print('Error: Invalid number of arguments to the script.')
         print('Usage:')
-        print('  python3 plot_mining_time.py <log_dir_name> [<title> <subtitle>]')
+        print('  python3 plot_mining_time.py (spb | baseline) <simulation_name> [<title> <subtitle>]')
         exit()
     
-    log_dir_name = sys.argv[1]
-    if len(sys.argv) >= 3:
-        title = sys.argv[2]
+    simulation_type = sys.argv[1]
+    simulation_name = sys.argv[2]
+    if len(sys.argv) >= 4:
+        title = sys.argv[3]
     else:
         title = "Time Taken to Mine a Transaction"
-    if len(sys.argv) >= 4:
-        subtitle = sys.argv[3]
+    if len(sys.argv) >= 5:
+        subtitle = sys.argv[4]
     else:
-        subtitle = "Plot generated from log: {}".format(log_dir_name)
+        subtitle = "Plot generated from log: {}".format(simulation_name)
         
-    file_path = './log/spb/{}/mining_time.log'.format(log_dir_name)
-    result_path = './log/spb/{}/final_result.log'.format(log_dir_name)
+    file_path = './log/{}/{}/mining_time.log'.format(simulation_type, simulation_name)
+    result_path = './log/{}/{}/final_result.log'.format(simulation_type, simulation_name)
     if not os.path.isfile(file_path):
         raise Exception('File {} does not exist'.format(file_path))
     if not os.path.isfile(result_path):
@@ -64,5 +65,5 @@ if __name__ == '__main__':
     plt.subplots_adjust(bottom=0.18)
     text = "Mean = {0:.3f}, Standard Deviation = {1:.3f}".format(mean, sd)
     plt.figtext(0.5,0.05, text, fontsize=9, va="top", ha="center")
-    plt.savefig("./plots/{}.png".format(log_dir_name))
+    plt.savefig("./plots/{}.png".format(simulation_name))
     plt.show()

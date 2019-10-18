@@ -1,1 +1,1 @@
-__all__ = ["miner_ctp", "miner_erc", "poller", "helper", "test"]
+__all__ = ["miner_ctp", "miner_erc", "poller", "poller_baseline", "helper", "test"]

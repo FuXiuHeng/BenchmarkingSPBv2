@@ -27,13 +27,14 @@ def log_to_dict(log_path):
 
 if __name__ == "__main__":
     # Script usage check
-    if len(sys.argv) != 2 and len(sys.argv) != 3:
+    if len(sys.argv) != 3 and len(sys.argv) != 4:
         print('Error: Invalid number of arguments.')
-        print('Usage: python3 process_logs.py (all | ALL | __simulation_name__) [-f]')
+        print('Usage: python3 process_logs.py (spb | baseline) (all | ALL | __simulation_name__) [-f]')
         exit()
     
-    input_simulation_name = sys.argv[1]
-    if len(sys.argv) == 3 and sys.argv[2] == "-f":
+    input_simulation_type = sys.argv[1]
+    input_simulation_name = sys.argv[2]
+    if len(sys.argv) == 4 and sys.argv[3] == "-f":
         force_flag = True
     else:
         force_flag = False
@@ -49,7 +50,7 @@ if __name__ == "__main__":
         simulation_list.append(input_simulation_name)
 
     for simulation_name in simulation_list:
-        log_dir = './log/spb/{}'.format(simulation_name)
+        log_dir = './log/{}/{}'.format(input_simulation_type, simulation_name)
 
         # Check if specified simulation name exists
         if not os.path.isdir(log_dir):
@@ -84,19 +85,22 @@ if __name__ == "__main__":
         num_txn = len(time_sent_keys)
         
         # Computing total mining time and mean mining time
-        for txn_hash in time_sent_keys:
-            if txn_hash not in time_mined_dict:
-                print('Warning: Inconsistency between time_sent and time_mined logs.')
-                print('{} exists in time_sent log but not in time_mined log.')
-                print('time_sent log: {}'.format(time_sent_path))
-                print('time_mined log: {}'.format(time_mined_path))
-                continue
+        with open(mining_time_path, 'w+') as f:
+            for txn_hash in time_sent_keys:
+                if txn_hash not in time_mined_dict:
+                    print('Warning: Inconsistency between time_sent and time_mined logs.')
+                    print('{} exists in time_sent log but not in time_mined log.')
+                    print('time_sent log: {}'.format(time_sent_path))
+                    print('time_mined log: {}'.format(time_mined_path))
+                    continue
 
-            time_sent = time_sent_dict[txn_hash]
-            time_mined = time_mined_dict[txn_hash]
-            mining_time = float(time_mined) - float(time_sent)
-            total_mining_time += mining_time
-            mining_time_dict[txn_hash] = mining_time
+                time_sent = time_sent_dict[txn_hash]
+                time_mined = time_mined_dict[txn_hash]
+                mining_time = float(time_mined) - float(time_sent)
+                total_mining_time += mining_time
+                mining_time_dict[txn_hash] = mining_time
+
+                f.write("{} {}".format(mining_time, txn_hash))
 
         mean_mining_time = total_mining_time / num_txn
 
