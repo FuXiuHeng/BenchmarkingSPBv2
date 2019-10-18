@@ -10,7 +10,7 @@ import private_keys.getter
 import overlay_nodes.helper.communications as communications
 import overlay_nodes.helper.constants
 import overlay_nodes.helper.logger as logger
-from overlay_nodes import poller_baseline
+from overlay_nodes import poller
 from settings.settings import settings
 
 # Smart contract settings
@@ -30,7 +30,7 @@ print("Running Baseline simulation")
 
 # Starting process for poller
 print("Starting process for poller")
-poller_process = multiprocessing.Process(target=poller_baseline.run, args=(settings,))
+poller_process = multiprocessing.Process(target=poller.run, args=(settings, "baseline", ))
 poller_process.start()
 print("Allowing time for the poller to complete initialisation")
 time.sleep(5)

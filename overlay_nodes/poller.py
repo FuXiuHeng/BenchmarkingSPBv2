@@ -6,7 +6,7 @@ import overlay_nodes.helper.communications as communications
 import overlay_nodes.helper.constants as constants
 import overlay_nodes.helper.logger as logger
 
-def run(settings):
+def run(settings, simulation_type):
     # Simulation settings
     simulation_name = settings["simulation_name"]
 
@@ -86,11 +86,17 @@ def run(settings):
                         gas_used = txn_receipt['gasUsed']
 
                         # Log the time the block is mined
-                        logger.log_time_mined(simulation_name, time_mined, from_addr, txn)
+                        if simulation_type == "spb":
+                            logger.log_time_mined(simulation_name, time_mined, from_addr, txn)
+                        else:
+                            logger.log_baseline_time_mined(simulation_name, time_mined, from_addr, txn)
 
                         # Get the gas used by the transaction 
                         gas_used = w3.eth.getTransactionReceipt(txn)['gasUsed']
-                        logger.log_gas_used(simulation_name, gas_used, from_addr, txn)
+                        if simulation_type == "spb":
+                            logger.log_gas_used(simulation_name, gas_used, from_addr, txn)
+                        else:
+                            logger.log_baseline_gas_used(simulation_name, gas_used, from_addr, txn)
 
                         txn_count += 1
                         if txn_count == total_txn:

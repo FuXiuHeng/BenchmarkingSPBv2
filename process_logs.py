@@ -42,7 +42,7 @@ if __name__ == "__main__":
     simulation_list = []
     # Process all unprocessed logs in the log directory
     if input_simulation_name == 'all' or input_simulation_name == 'ALL':
-        for simulation_name in os.listdir('./log'):
+        for simulation_name in os.listdir('./log/{}'.format(input_simulation_type)):
             simulation_list.append(simulation_name)
  
     # Process only the log of the specified simulation name

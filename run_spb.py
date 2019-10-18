@@ -43,7 +43,7 @@ print('Running SPB simulation')
 print('Starting threads for miner_ctp, miner_erc and poller')
 miner_ctp_thread = threading.Thread(target=miner_ctp.run, args=(settings,))
 miner_erc_thread = threading.Thread(target=miner_erc.run, args=(settings,))
-poller_process = multiprocessing.Process(target=poller.run, args=(settings,))
+poller_process = multiprocessing.Process(target=poller.run, args=(settings, "spb", ))
 
 miner_ctp_thread.start()
 miner_erc_thread.start()
