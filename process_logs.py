@@ -34,6 +34,11 @@ if __name__ == "__main__":
     
     input_simulation_type = sys.argv[1]
     input_simulation_name = sys.argv[2]
+
+    if input_simulation_type != "spb" and input_simulation_type != "baseline":
+        print("Input simulation type must be either 'spb' or 'baseline")
+        exit()
+
     if len(sys.argv) == 4 and sys.argv[3] == "-f":
         force_flag = True
     else:
@@ -149,3 +154,82 @@ if __name__ == "__main__":
             f.write("Mean               : {}\n".format(mean_gas_used))
             f.write("Variance           : {}\n".format(variance_gas_used))
             f.write("Standard deviation : {}\n".format(sd_gas_used))
+            f.write("\n")
+
+        # Baseline ONLY - split the gas_used metrics into three parts:
+        # gas used in contract creation, payment to contract & contract payment to producer
+        if input_simulation_type == "baseline":
+            total_gas_contract_creation = 0
+            total_gas_contract_payment = 0
+            total_gas_producer_payment = 0
+
+            num_txn_per_part = num_txn / 3
+            txn_counter = 0
+            for txn_hash in gas_used_dict:
+                if txn_counter < num_txn_per_part:
+                    total_gas_contract_creation += int(gas_used_dict[txn_hash])
+                elif txn_counter < 2 * num_txn_per_part:
+                    total_gas_contract_payment += int(gas_used_dict[txn_hash])
+                else:
+                    total_gas_producer_payment += int(gas_used_dict[txn_hash])
+                
+                txn_counter += 1
+
+            mean_gas_contract_creation = total_gas_contract_creation / num_txn_per_part
+            mean_gas_contract_payment = total_gas_contract_payment / num_txn_per_part
+            mean_gas_producer_payment = total_gas_producer_payment / num_txn_per_part
+
+            # Computing standard deviation and variance of gas used
+            variance_gas_contract_creation = 0
+            variance_gas_contract_payment = 0
+            variance_gas_producer_payment = 0
+
+            txn_counter = 0
+            for txn_hash in gas_used_dict:
+                if txn_counter < num_txn_per_part:                            
+                    diff = int(gas_used_dict[txn_hash]) - mean_gas_contract_creation
+                    variance_gas_contract_creation += diff * diff
+
+                elif txn_counter < 2 * num_txn_per_part:             
+                    diff = int(gas_used_dict[txn_hash]) - mean_gas_contract_payment
+                    variance_gas_contract_payment += diff * diff
+
+                else:             
+                    diff = int(gas_used_dict[txn_hash]) - mean_gas_producer_payment
+                    variance_gas_producer_payment += diff * diff
+
+                txn_counter += 1
+
+            variance_gas_contract_creation /= (num_txn_per_part - 1)
+            variance_gas_contract_payment /= (num_txn_per_part - 1)
+            variance_gas_producer_payment /= (num_txn_per_part - 1)
+
+            sd_gas_contract_creation = math.sqrt(variance_gas_contract_creation)
+            sd_gas_contract_payment = math.sqrt(variance_gas_contract_payment)
+            sd_gas_producer_payment = math.sqrt(variance_gas_producer_payment)
+
+            with open(final_result_path, 'a+') as f:
+                f.write("Gas Used split into three parts:\n")
+                f.write("----------------------------------------------\n")
+                f.write("[Part 1: Contract Creation]\n")
+                f.write("----------------------------------------------\n")
+                f.write("Total              : {}\n".format(total_gas_contract_creation))
+                f.write("Mean               : {}\n".format(mean_gas_contract_creation))
+                f.write("Variance           : {}\n".format(variance_gas_contract_creation))
+                f.write("Standard deviation : {}\n".format(sd_gas_contract_creation))
+                f.write("----------------------------------------------\n")
+                f.write("[Part 2: Contract Payment]\n")
+                f.write("----------------------------------------------\n")
+                f.write("Total              : {}\n".format(total_gas_contract_payment))
+                f.write("Mean               : {}\n".format(mean_gas_contract_payment))
+                f.write("Variance           : {}\n".format(variance_gas_contract_payment))
+                f.write("Standard deviation : {}\n".format(sd_gas_contract_payment))
+                f.write("----------------------------------------------\n")
+                f.write("[Part 3: Producer Payment]\n")
+                f.write("----------------------------------------------\n")
+                f.write("Total              : {}\n".format(total_gas_producer_payment))
+                f.write("Mean               : {}\n".format(mean_gas_producer_payment))
+                f.write("Variance           : {}\n".format(variance_gas_producer_payment))
+                f.write("Standard deviation : {}\n".format(sd_gas_producer_payment))
+                f.write("\n")
+       

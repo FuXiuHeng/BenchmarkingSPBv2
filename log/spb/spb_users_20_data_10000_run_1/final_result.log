@@ -1,0 +1,16 @@
+Number of transactions: 10000
+
+Mining Time in seconds
+----------------------------------------------
+Total              : 73334.12503814697
+Mean               : 7.333412503814698
+Variance           : 45.867005832005916
+Standard deviation : 6.772518426110476
+
+Gas Used in seconds
+----------------------------------------------
+Total              : 210000000
+Mean               : 21000.0
+Variance           : 0.0
+Standard deviation : 0.0
+
