@@ -1,6 +1,7 @@
 import multiprocessing
 import json
 import socket
+import subprocess
 import time
 import web3
 from solc import compile_standard
@@ -271,3 +272,6 @@ print("All payment transaction has been mined")
 poller_process.join()
 
 print("Baseline simulation completed")
+
+# Kill all ethereum nodes
+subprocess.call("./scripts/kill_eth_nodes.sh")
