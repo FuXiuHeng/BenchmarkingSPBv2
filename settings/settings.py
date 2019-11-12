@@ -2,13 +2,13 @@ from datetime import datetime
 
 settings = {
     # Simulation settings
-    "num_users": 20, # Existing data has up to 85 unique users (use 86 to allow for 1 producer)
+    "num_users": 2, # Existing data has up to 85 unique users (use 86 to allow for 1 producer)
     # "simulation_name": datetime.now().strftime('%Y%m%d_%H%M_file1_70000_100000'),
-    "simulation_name": datetime.now().strftime('%Y%m%d_%H%M_users_20_data_5000'),
+    "simulation_name": datetime.now().strftime('%Y%m%d_%H%M_users_2_data_20'),
     "energy_price": 0.00001,
 
     # Data settings
-    "data_path": './data/generated/users_85_data_5000.txt',
+    "data_path": './data/generated/users_85_data_20.txt',
 
     # Partial data settings
     "use_partial_data": False, # If true, only run simulation with a subset of the data

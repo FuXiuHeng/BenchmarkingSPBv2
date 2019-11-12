@@ -7,6 +7,7 @@ import multiprocessing
 import pickle
 import socket
 import struct
+import subprocess
 import threading
 import time
 import web3
@@ -190,3 +191,6 @@ miner_conn.close()
 miner_ctp_thread.join()
 miner_erc_thread.join()
 poller_process.join()
+
+# Kill all ethereum nodes
+subprocess.call("./scripts/kill_eth_nodes.sh")
