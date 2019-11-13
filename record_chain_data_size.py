@@ -1,7 +1,9 @@
 #!/usr/bin/python3
 
 import os
+import re
 import sys
+import subprocess
 
 if __name__ == '__main__':
     if len(sys.argv) != 3:
@@ -14,9 +16,8 @@ if __name__ == '__main__':
     simulation_name = sys.argv[2]
 
     chain_data_path = os.path.join(".", "eth_nodes", "miner", "geth", "chaindata")
-    chain_data_size = os.path.getsize(chain_data_path)
-
+    result = subprocess.run(['du', '-sh', chain_data_path], stdout=subprocess.PIPE)
     result_path = os.path.join(".", "log", simulation_type, simulation_name, "chain_data_size.log")
 
     with open(result_path, "w+") as f:
-        f.write("Chain data size: {} bytes\n".format(chain_data_size))
+        f.write("Chain data size: \n{} \n".format(result.stdout.decode('utf-8')))
