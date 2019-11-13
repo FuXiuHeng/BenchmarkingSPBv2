@@ -16,8 +16,11 @@ if __name__ == '__main__':
     simulation_name = sys.argv[2]
 
     chain_data_path = os.path.join(".", "eth_nodes", "miner", "geth", "chaindata")
-    result = subprocess.run(['du', '-sh', chain_data_path], stdout=subprocess.PIPE)
+    result1 = subprocess.run(['du', '-s', chain_data_path], stdout=subprocess.PIPE)
+    result2 = subprocess.run(['du', '-sh', chain_data_path], stdout=subprocess.PIPE)
     result_path = os.path.join(".", "log", simulation_type, simulation_name, "chain_data_size.log")
 
     with open(result_path, "w+") as f:
-        f.write("Chain data size: \n{} \n".format(result.stdout.decode('utf-8')))
+        f.write("Chain data size: \n")
+        f.write("{}".format(result1.stdout.decode('utf-8')))
+        f.write("{}".format(result2.stdout.decode('utf-8')))
