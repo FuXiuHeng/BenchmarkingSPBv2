@@ -1,0 +1,39 @@
+Number of transactions: 60000
+
+Mining Time in seconds
+----------------------------------------------
+Total              : 743574.0046112537
+Mean               : 12.392900076854229
+Variance           : 131.01563869775515
+Standard deviation : 11.446206301554902
+
+Gas Used in seconds
+----------------------------------------------
+Total              : 6330512512
+Mean               : 105508.54186666667
+Variance           : 9734379922.943684
+Standard deviation : 98662.9612516454
+
+Gas Used split into three parts:
+----------------------------------------------
+[Part 1: Contract Creation]
+----------------------------------------------
+Total              : 4897572512
+Mean               : 244878.6256
+Variance           : 2265.675508415529
+Standard deviation : 47.59911247508223
+----------------------------------------------
+[Part 2: Contract Payment]
+----------------------------------------------
+Total              : 831900000
+Mean               : 41595.0
+Variance           : 0.0
+Standard deviation : 0.0
+----------------------------------------------
+[Part 3: Producer Payment]
+----------------------------------------------
+Total              : 601040000
+Mean               : 30052.0
+Variance           : 0.0
+Standard deviation : 0.0
+
