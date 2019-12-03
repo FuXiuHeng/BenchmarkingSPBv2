@@ -5,22 +5,30 @@ This code is written for the purpose of thesis in UNSW 2019 on the topic of Benc
 solution to energy trading. The primary purpose of this code is to run simulations of the SPB solution and a baseline solution,
 and log performance results of these solutions. The steps to doing so are outlined below. Note that some scripts are written in Python and some in Bash.
 
+## Sections:
+1. [Quick Start: Running a Simulation](#quick-start-running-a-simulation)
+2. [Recording Blockchain Database Size](#recording-blockchain-database-size)
+3. [Processing Results](#processing-results)
+4. [Plotting the Mining Time](#plotting-the-mining-time)
+5. [Directory Structure](#directory-structure)
+6. [Debugging](#debugging)
+
 ## Quick Start: Running a Simulation
 To run a simulation, there are several steps involved:
 
-1. Installing dependencies
+**1. Installing dependencies**
     - Note: hese are written with Linux OS in mind
     - To install the dependencies, run the two scripts 
       - `./scripts/install_apt_dependencies.sh` 
       - `./scripts/install_pip3_dependencies.sh`
 
-2. Configuring the settings 
+**2. Configuring the settings**
     - There are two settings file `settings/settings.py` and `settings/settings.sh`
     - Change the number of nodes, port numbers etc
     - **Note**: ensure both setting files have values that match up because I wrote some scripts in Bash and some in Python,
     and didn't end up unifying them.
 
-3. Configuring MySQL
+**3. Configuring MySQL**
     - This step is only needed for the SPB simulation as it stores CTP transactions in MySQL database.
     - Login to MySQL with root user and create a new user:
     - ```
@@ -29,7 +37,7 @@ To run a simulation, there are several steps involved:
       ```
     - Edit the `db_user, db_password` fields in the `settings/settings.py` file
 
-4. Run the Ethereum nodes
+**4. Run the Ethereum nodes**
     - Before we run the nodes, we first need to initialise all the nodes. This can be done by running the script:
     - `python3 init_eth_nodes.py`
     - After running the above, the directory `eth_nodes/` should contain the `miner/` directory and other `userxx/` 
@@ -37,7 +45,7 @@ To run a simulation, there are several steps involved:
     - Now, we can run the nodes by running the script:
     - `./scripts/start_eth_nodes.sh`
     
-5. Run the simulation
+**5. Run the simulation**
     - To run the SPB simulation: 
         - run `./run_spb.sh` to run it in the background, or 
         - run `python3 run_spb.py` to run in the terminal.
@@ -45,7 +53,7 @@ To run a simulation, there are several steps involved:
         - run `./run_baseline.sh` to run it in the background, or
         - run `python3 run_baseline.py` to run in the terminal.
         
-6. Killing the Ethereum nodes
+**6. Killing the Ethereum nodes**
     - Once the simulation ends and you want to kill the background nodes, simply edit the username in the script 
     below and run it
     - `./scripts/kill_eth_nodes.sh`
@@ -53,16 +61,19 @@ To run a simulation, there are several steps involved:
 ## Recording Blockchain Database Size
 To record the chaindata size after the simulation ended, run the script:
 ```
+python3 record_chain_data_size.py (spb|baseline) <simulation_name>
+```
+This will generate a log file named `chain_data_size.log` in the specified simulation directory.
+
+The script's arguments are explained below:
+```
 ## Arguments:
 # (spb|basline) - specifies which log directory to look into
 # <simulation_name> - specifies which simulation to process
 
-python3 record_chain_data_size.py (spb|baseline) <simulation_name>
-
 ## Example:
 python3 record_chain_data_size.py spb spb_simulation_run_1
 ```
-This will generate a log file named `chain_data_size.log` in the specified simulation directory.
 
 ## Processing Results
 The log results are all stored in the directory `log/spb/<simulation_name>/` or `log/baseline/<simulation_name>/`. In this directory, there should initially be 3 types of log file:
@@ -72,33 +83,54 @@ The log results are all stored in the directory `log/spb/<simulation_name>/` or 
     
 To process these logs to obtain more meaningful results, run the command:
 ```
+python3 process_logs.py (spb|baseline) (all|ALL|<simulation_name>) [-f]
+```
+This will generate two new files:
+    - `mining_time.log` : stores the difference between time mined and time sent of each transaction
+    - `final_result.log`: stores the mean, variance and standard deviation of the mining time and gas used
+    
+
+The script's arguments are explained below:
+```
 ## Arguments:
 # (spb|basline) - specifies which log directory to look into
 # (all|ALL|<simulation_name>) - specifies which simulation to process
 # [-f] - option flag, if set, will overwrite any existing processed results
 
-python3 process_logs.py (spb|baseline) (all|ALL|<simulation_name>) [-f]
-
 ## Example:
 python3 process_logs.py spb spb_simulation_run_1
 ```
 
-This will generate two new files:
-    - `mining_time.log` : stores the difference between time mined and time sent of each transaction
-    - `final_result.log`: stores the mean, variance and standard deviation of the mining time and gas used
-    
 ## Plotting the Mining Time
 Once the `mining_time.log` file has been generated by following the above steps, we can plot this by running the command:
+```
+python3 plot_mining_time.py (spb | baseline) <simulation_name> [<title> <subtitle>]
+```
+This is generated the plots and automatically saves it into the directory `plots/`.
+
+The script's arguments are explained below:
 ```
 ## Arguments:
 # (spb|baseline) - specified which log directory to look into
 # <simulation_name> - specified which simulation to process
 #[<title> <subtitle>] - optional title and subtitle can be provided to overwrite the default set by the script
 
-python3 plot_mining_time.py (spb | baseline) <simulation_name> [<title> <subtitle>]
-
 ## Example: 
 python3 plot_mining_time.py spb spb_simulation_run_1
+```
+
+## Directory Structure
+The directory structure of the code base is as follows:
+```
+contracts/             - stores smart contract code used in baseline simulation
+data/                  - stores energy trade input data
+eth_nodes/             - stores the ethereum nodes data
+log/                   - stores the simulation logs
+overlay_nodes/         - contains scripts of the overlay nodes for SPB simulation
+plots/                 - stores the mining time plots
+private_keys/          - contains the private keys of that is used for the ethereum nodes
+scripts/               - contains helpful scripts
+settings/              - contains simulation settings and genesis.json
 ```
 
 ## Debugging
